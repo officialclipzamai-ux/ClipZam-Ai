@@ -1,265 +1,828 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ClipZam — Identify Movies &amp; TV Clips</title>
-  <meta name="theme-color" content="#08090D" />
-  <link rel="manifest" href="/public/manifest.json" />
-  <link rel="icon" type="image/png" href="/file_000000001ea46246e2d811f6ca36795b2.png" />
-  <link rel="apple-touch-icon" href="/file_000000001ea46246e2d811f6ca36795b2.png" />
-  <style>
-    :root {
-      --bg: #08090d;
-      --card: #12151f;
-      --text: #f3f5fa;
-      --muted: #9aa3b8;
-      --accent: #2d7bff;
-      --accent2: #18e0ff;
-      --border: #23283a;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ClipZam AI — Find any movie or show from a clip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          obsidian: '#08090D',
+          surface: '#11131B',
+          elevated: '#181B26',
+          cinema: {
+            DEFAULT: '#00D4FF',
+            hover: '#2979FF',
+            violet: '#7C3AED'
+          }
+        }
+      }
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 24px 16px 48px;
-    }
-    .wrap {
-      max-width: 680px;
-      margin: 0 auto;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    .brand img {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      object-fit: cover;
-    }
-    h1 {
-      font-size: 1.5rem;
-      margin: 0;
-      background: linear-gradient(90deg, var(--accent2), var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .sub {
-      color: var(--muted);
-      font-size: 0.92rem;
-      margin: 4px 0 0;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-    label {
-      display: block;
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    input[type="file"],
-    textarea {
-      width: 100%;
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.95rem;
-    }
-    textarea {
-      min-height: 84px;
-      resize: vertical;
-      margin-top: 12px;
-    }
-    button {
-      margin-top: 14px;
-      width: 100%;
-      padding: 13px 16px;
-      border: 0;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #fff;
-      background: linear-gradient(135deg, var(--accent2), var(--accent));
-      cursor: pointer;
-    }
-    button:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-    .status {
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-top: 10px;
-      white-space: pre-wrap;
-    }
-    .result-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin: 0 0 6px;
-    }
-    .meta {
-      color: var(--accent2);
-      font-size: 0.88rem;
-      margin-bottom: 10px;
-    }
-    .overview {
-      line-height: 1.5;
-      color: var(--text);
-      margin: 0;
-    }
-  </style>
+  }
+</script>
+<style>
+  :root {
+    --bg: #08090D;
+    --surface: #11131B;
+    --elevated: #181B26;
+    --accent: #00D4FF;
+    --accent-violet: #7C3AED;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--bg);
+    color: #F4F5F8;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .ambient-glow {
+    position: fixed;
+    top: -160px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(760px, 120vw);
+    height: 360px;
+    background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.11) 0%, rgba(124, 58, 237, 0.08) 48%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .brand-gradient-bg {
+    background: linear-gradient(135deg, #00E5FF 0%, #2979FF 52%, #7C3AED 100%);
+  }
+  .brand-gradient-bg:hover {
+    background: linear-gradient(135deg, #29EEFF 0%, #3B82F6 52%, #8B5CF6 100%);
+  }
+  .brand-gradient-text {
+    background: linear-gradient(95deg, #00F0FF 0%, #2979FF 50%, #8B5CF6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .drop-zone {
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+    background: rgba(17, 19, 27, 0.75);
+  }
+  .drop-zone:hover, .drop-zone.over {
+    border-color: #00D4FF;
+    background: rgba(0, 212, 255, 0.05);
+  }
+
+  input[type="range"].trim-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    outline: none;
+  }
+  input[type="range"].trim-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00E5FF, #7C3AED);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(0, 212, 255, 0.55);
+    cursor: pointer;
+  }
+  input[type="range"].trim-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00E5FF, #7C3AED);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(0, 212, 255, 0.55);
+    cursor: pointer;
+  }
+
+  .shelf-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+  .shelf-scroll::-webkit-scrollbar { height: 5px; }
+  .shelf-scroll::-webkit-scrollbar-track { background: transparent; }
+  .shelf-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+
+  @keyframes scanLine {
+    0% { top: 0%; opacity: 0; }
+    15% { opacity: 0.9; }
+    85% { opacity: 0.9; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .scanner-beam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00F0FF, #7C3AED, #00F0FF, transparent);
+    box-shadow: 0 0 14px 2px rgba(0, 229, 255, 0.75);
+    animation: scanLine 2.1s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-up {
+    animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+</style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="brand">
-      <img src="/file_000000001ea46246e2d811f6ca36795b2.png" alt="ClipZam logo" />
-      <div>
-        <h1>ClipZam</h1>
-        <p class="sub">Identify movies &amp; TV episodes from clips or clues</p>
-      </div>
+<body class="flex flex-col selection:bg-cyan-400/25 selection:text-white">
+
+  <div class="ambient-glow" aria-hidden="true"></div>
+
+  <header class="relative z-10 border-b border-white/[0.06] bg-obsidian/85 backdrop-blur-xl sticky top-0">
+    <div class="max-w-[680px] mx-auto px-4 sm:px-6 h-16 sm:h-[70px] flex items-center justify-between gap-3">
+      <a href="#" id="brandReset" aria-label="ClipZam Home" class="inline-flex items-center group focus:outline-none shrink-0">
+        <svg class="h-9 sm:h-11 w-auto block overflow-visible transition-transform duration-200 group-hover:scale-[1.015]" viewBox="0 0 430 112" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClipZam">
+          <defs>
+            <linearGradient id="czMainGrad" x1="8" y1="20" x2="104" y2="96" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5FF"/>
+              <stop offset="48%" stop-color="#2979FF"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+            <linearGradient id="czZamGrad" x1="258" y1="26" x2="424" y2="86" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5FF"/>
+              <stop offset="45%" stop-color="#2979FF"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+            <linearGradient id="czPlayGrad" x1="44" y1="38" x2="74" y2="74" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#38F9FF"/>
+              <stop offset="55%" stop-color="#2979FF"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+            <filter id="czGlow" x="-16%" y="-16%" width="132%" height="132%">
+              <feDropShadow dx="0" dy="0" stdDeviation="2.4" flood-color="#00E5FF" flood-opacity="0.32"/>
+            </filter>
+          </defs>
+
+          <g filter="url(#czGlow)">
+            <path d="M12 31V19C12 14.5817 15.5817 11 20 11H32" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M80 11H92C96.4183 11 100 14.5817 100 19V31" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 81V93C12 97.4183 15.5817 101 20 101H32" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M80 101H92C96.4183 101 100 97.4183 100 93V81" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="56" cy="56" r="39" stroke="url(#czMainGrad)" stroke-width="4.4" stroke-linecap="round" stroke-dasharray="106 10 3 10 72 10 3 10" transform="rotate(-118 56 56)"/>
+            <circle cx="56" cy="56" r="30.5" stroke="url(#czMainGrad)" stroke-width="4.2" stroke-linecap="round" stroke-dasharray="78 9 3 9 62 9 3 9" transform="rotate(24 56 56)"/>
+            <circle cx="56" cy="56" r="22" stroke="url(#czMainGrad)" stroke-width="4.0" stroke-linecap="round" stroke-dasharray="64 11 3 11 36 13" transform="rotate(-48 56 56)"/>
+            <path d="M47.5 41.2C47.5 38.7 50.25 37.18 52.38 38.48L72.6 50.82C74.64 52.06 74.64 55.02 72.6 56.26L52.38 68.6C50.25 69.9 47.5 68.38 47.5 65.88V41.2Z" fill="url(#czPlayGrad)" stroke="#7DF9FF" stroke-opacity="0.45" stroke-width="1.2"/>
+          </g>
+
+          <g>
+            <path d="M161.2 44.5C158.1 40.9 153.6 39 148.2 39C138.2 39 131.4 46.2 131.4 56.2C131.4 66.2 138.2 73.4 148.2 73.4C153.6 73.4 158.1 71.5 161.2 67.9L169.3 75.2C164.2 81.2 156.7 84.4 147.8 84.4C131.3 84.4 119.4 72.7 119.4 56.2C119.4 39.7 131.3 28 147.8 28C156.7 28 164.2 31.2 169.3 37.2L161.2 44.5Z" fill="#FFFFFF"/>
+            <rect x="176.5" y="27.5" width="11.2" height="55.8" rx="3.2" fill="#FFFFFF"/>
+            <circle cx="203.2" cy="32.2" r="6.3" fill="#FFFFFF"/>
+            <rect x="197.6" y="43.8" width="11.2" height="39.5" rx="3.2" fill="#FFFFFF"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M218.2 43.8H228.8V48.6C231.6 45.1 235.9 43 241.3 43C252.4 43 260.4 51.3 260.4 63.5C260.4 75.7 252.4 84 241.3 84C236.2 84 232.1 82.1 229.4 78.9V97.5H218.2V43.8ZM239.3 73.8C245.3 73.8 249.3 69.5 249.3 63.5C249.3 57.5 245.3 53.2 239.3 53.2C233.3 53.2 229.3 57.5 229.3 63.5C229.3 69.5 233.3 73.8 239.3 73.8Z" fill="#FFFFFF"/>
+            <g fill="url(#czZamGrad)">
+              <path d="M266.5 29H315.5L304.2 39.8H266.5V29Z"/>
+              <path d="M318.8 31.2L281.4 72.5H318.8V83.3H265.2V73.8L303.2 31.2H318.8Z"/>
+            </g>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M352.6 43.8H363.6V83.3H352.6V78.6C349.8 82.1 345.5 84.1 340.1 84.1C329.2 84.1 321.4 75.8 321.4 63.5C321.4 51.2 329.2 43 340.1 43C345.5 43 349.8 45 352.6 48.5V43.8ZM342.5 73.8C348.5 73.8 352.6 69.5 352.6 63.5C352.6 57.5 348.5 53.2 342.5 53.2C336.5 53.2 332.5 57.5 332.5 63.5C332.5 69.5 336.5 73.8 342.5 73.8Z" fill="url(#czZamGrad)"/>
+            <path d="M372.4 43.8H383.2V48.5C385.8 45.1 389.8 43 394.8 43C400.2 43 404.5 45.3 406.9 49.4C409.9 45.3 414.5 43 420.1 43C429.4 43 435.5 49.3 435.5 59.6V83.3H424.4V61.3C424.4 56.1 421.5 53.1 417.1 53.1C412.6 53.1 409.5 56.2 409.5 61.5V83.3H398.5V61.3C398.5 56.1 395.6 53.1 391.2 53.1C386.7 53.1 383.6 56.2 383.6 61.5V83.3H372.4V43.8Z" fill="url(#czZamGrad)"/>
+          </g>
+        </svg>
+      </a>
+
+      <div id="sessionPillBar" class="hidden items-center gap-1.5 overflow-x-auto max-w-[52%]"></div>
     </div>
+  </header>
 
-    <form id="clipForm" class="card">
-      <label for="mediaFile">Upload a short clip or screenshot (optional)</label>
-      <input id="mediaFile" type="file" accept="video/*,audio/*,image/*" />
+  <main class="relative z-10 flex-1 w-full max-w-[680px] mx-auto px-4 sm:px-6 pt-7 sm:pt-11 pb-16">
+    <section class="text-center mb-6 sm:mb-7">
+      <h1 class="font-display font-extrabold text-2xl sm:text-4xl tracking-tight text-white leading-[1.15]">
+        Find any movie or show from a <span class="brand-gradient-text">clip</span>.
+      </h1>
+    </section>
 
-      <textarea id="clueText" placeholder="Optional: add dialogue, scene details, or actors you remember..."></textarea>
+    <section class="bg-surface border border-white/[0.08] rounded-2xl p-4 sm:p-6 shadow-2xl">
+      <label class="drop drop-zone block border border-dashed border-white/[0.14] rounded-xl py-9 px-5 sm:py-12 sm:px-8 text-center cursor-pointer group" id="drop">
+        <div class="w-12 h-12 mx-auto mb-3.5 rounded-2xl bg-elevated border border-white/[0.08] flex items-center justify-center text-[#00E5FF] group-hover:scale-105 transition-transform">
+          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <strong class="block font-display text-base sm:text-lg font-bold text-white mb-1">
+          Tap to choose a clip or drop it here
+        </strong>
+        <small class="block text-xs sm:text-sm text-slate-400">
+          Video or audio • Best results with clear speech, faces, or soundtrack
+        </small>
+        <input type="file" id="file" accept="video/*,audio/*" class="hidden">
+      </label>
 
-      <button id="submitBtn" type="submit">Identify Clip</button>
-      <div id="status" class="status"></div>
-    </form>
+      <div id="previewStage" class="hidden space-y-4">
+        <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <p id="fileNameLabel" class="text-sm font-medium text-white truncate">clip.mp4</p>
+            <p class="text-xs font-mono text-slate-400 mt-0.5">
+              <span id="fileSizeLabel">0 MB</span> · <span id="fileDurationLabel" class="text-emerald-400">Ready</span>
+            </p>
+          </div>
+          <button id="clearClipBtn" type="button" class="shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-200 transition-colors cursor-pointer">
+            Change clip
+          </button>
+        </div>
 
-    <div id="resultCard" class="card" style="display:none;">
-      <div id="resultMeta" class="meta"></div>
-      <h2 id="resultTitle" class="result-title"></h2>
-      <p id="resultOverview" class="overview"></p>
+        <div class="relative rounded-xl overflow-hidden bg-black border border-white/[0.08]">
+          <div id="scannerOverlay" class="hidden scanner-beam"></div>
+          <video id="preview" controls playsinline hidden class="w-full max-h-[300px] sm:max-h-[340px] block bg-black focus:outline-none"></video>
+        </div>
+
+        <div id="trimBox" class="hidden rounded-xl bg-elevated/90 border border-white/[0.08] p-3.5 sm:p-4 space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-semibold text-white flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-[#00E5FF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+              Select 15-second window to analyze
+            </span>
+            <span id="trimRangeLabel" class="font-mono text-xs text-[#38F2FF] font-semibold">0:00 – 0:15</span>
+          </div>
+          <input id="trimSlider" type="range" min="0" max="0" step="0.5" value="0" class="trim-slider">
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Clip exceeds 15s. Slide to pick the clearest 15s moment—ClipZam will extract that exact segment in your browser before sending.
+          </p>
+        </div>
+      </div>
+
+      <!-- Optional Clues Input (Dialogue, Scene Details, or Actors) -->
+      <div class="mt-4 rounded-xl bg-elevated/90 border border-white/[0.08] p-3.5 sm:p-4">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <label for="clueInput" class="text-xs font-semibold text-white">
+            Optional clues
+          </label>
+          <span class="text-[11px] font-mono text-slate-400">Dialogue · Scene · Cast</span>
+        </div>
+        <textarea
+          id="clueInput"
+          rows="2"
+          maxlength="300"
+          placeholder="Add dialogue, scene details, or actors you remember..."
+          class="w-full rounded-lg bg-obsidian/80 border border-white/[0.08] focus:border-[#00D4FF] focus:outline-none px-3 py-2 text-xs sm:text-sm text-white placeholder-slate-500 resize-y min-h-[58px] transition-colors"
+        ></textarea>
+      </div>
+
+      <div id="note" class="msg info hidden mt-4 rounded-xl text-xs sm:text-sm" hidden></div>
+
+      <div id="progressBarBox" class="hidden mt-4 rounded-xl bg-elevated/80 border border-white/[0.08] p-3.5">
+        <div class="flex items-center justify-between text-xs mb-2">
+          <span id="progressStageText" class="font-medium text-slate-200 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>
+            Watching & listening to clip...
+          </span>
+          <span class="font-mono text-[11px] text-slate-400">10–35s</span>
+        </div>
+        <div class="h-1 w-full rounded-full bg-white/[0.07] overflow-hidden">
+          <div id="progressFill" class="h-full brand-gradient-bg rounded-full transition-all duration-700" style="width: 18%"></div>
+        </div>
+      </div>
+
+      <button id="go" disabled class="mt-4 w-full min-h-[50px] py-3.5 px-5 rounded-xl font-display font-bold text-sm sm:text-base text-white brand-gradient-bg active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/20">
+        <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span id="goLabel">Identify Clip</span>
+      </button>
+    </section>
+
+    <div id="out" class="mt-7"></div>
+  </main>
+
+  <div id="trailerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="w-full max-w-2xl bg-surface border border-white/[0.1] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
+        <span id="trailerTitle" class="text-sm font-display font-bold text-white truncate pr-4">Official Trailer</span>
+        <button id="closeTrailerBtn" type="button" class="min-w-[36px] min-h-[36px] rounded-lg bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center text-slate-300 hover:text-white cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="aspect-video w-full bg-black">
+        <iframe id="trailerFrame" class="w-full h-full border-0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+      </div>
     </div>
   </div>
 
-  <script>
-    const form = document.getElementById("clipForm");
-    const fileInput = document.getElementById("mediaFile");
-    const clueInput = document.getElementById("clueText");
-    const submitBtn = document.getElementById("submitBtn");
-    const statusEl = document.getElementById("status");
-    const resultCard = document.getElementById("resultCard");
-    const resultTitle = document.getElementById("resultTitle");
-    const resultMeta = document.getElementById("resultMeta");
-    const resultOverview = document.getElementById("resultOverview");
+<script>
+const CONFIG = {
+  API_ENDPOINT: "/api/identify",
+  MAX_SECONDS: 15,
+  MAX_MB: 10,
+  MAX_RAW_MB: 45,
+  HOURLY_LIMIT: 8
+};
 
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64 = String(reader.result).split(",")[1] || "";
-          resolve(base64);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
+const $ = id => document.getElementById(id);
+const fileInput = $('file'), preview = $('preview'), go = $('go'), out = $('out'), note = $('note'), drop = $('drop');
+const clueInput = $('clueInput');
+const previewStage = $('previewStage'), fileNameLabel = $('fileNameLabel'), fileSizeLabel = $('fileSizeLabel'), fileDurationLabel = $('fileDurationLabel');
+const trimBox = $('trimBox'), trimSlider = $('trimSlider'), trimRangeLabel = $('trimRangeLabel');
+const scannerOverlay = $('scannerOverlay'), progressBarBox = $('progressBarBox'), progressStageText = $('progressStageText'), progressFill = $('progressFill'), goLabel = $('goLabel');
 
-    async function callProxy(action, payload) {
-      const res = await fetch("/api/identify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action, payload }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.error || "Request failed.");
-      }
-      return data;
-    }
+let clip = null;
+let needsTrim = false;
+let trimStart = 0;
+let progressTimers = [];
+let sessionMatches = [];
+let currentRenderedMatch = null;
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      resultCard.style.display = "none";
-      const file = fileInput.files[0];
-      const clue = clueInput.value.trim();
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtTime = sec => {
+  const s = Math.max(0, Math.floor(sec));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
 
-      if (!file && !clue) {
-        statusEl.textContent = "Pick a file or enter a clue first.";
+function show(el, text, cls) {
+  el.hidden = false;
+  el.classList.remove('hidden');
+  if (cls === 'err') {
+    el.className = 'msg err mt-4 p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/30 text-rose-200 flex items-start gap-2.5';
+    el.innerHTML = `<svg class="w-4 h-4 text-rose-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${esc(text)}</span>`;
+  } else {
+    el.className = 'msg info mt-4 p-3.5 rounded-xl bg-elevated border border-white/[0.08] text-slate-300 flex items-start gap-2.5';
+    el.innerHTML = `<svg class="w-4 h-4 text-[#00E5FF] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${esc(text)}</span>`;
+  }
+}
+function hideNote() {
+  note.hidden = true;
+  note.classList.add('hidden');
+}
+
+function resetWorkspace() {
+  clip = null;
+  needsTrim = false;
+  trimStart = 0;
+  fileInput.value = '';
+  if (clueInput) clueInput.value = '';
+  preview.pause();
+  preview.removeAttribute('src');
+  preview.hidden = true;
+  previewStage.classList.add('hidden');
+  trimBox.classList.add('hidden');
+  drop.classList.remove('hidden');
+  out.innerHTML = '';
+  go.disabled = true;
+  goLabel.textContent = 'Identify Clip';
+  hideNote();
+}
+$('clearClipBtn').addEventListener('click', resetWorkspace);
+$('brandReset').addEventListener('click', e => { e.preventDefault(); resetWorkspace(); });
+
+function updateTrimPreview() {
+  trimStart = parseFloat(trimSlider.value) || 0;
+  const end = Math.min(preview.duration || trimStart + CONFIG.MAX_SECONDS, trimStart + CONFIG.MAX_SECONDS);
+  trimRangeLabel.textContent = `${fmtTime(trimStart)} – ${fmtTime(end)}`;
+  if (isFinite(preview.duration)) {
+    preview.currentTime = trimStart;
+  }
+}
+trimSlider.addEventListener('input', updateTrimPreview);
+
+function pick(file) {
+  out.innerHTML = '';
+  go.disabled = true;
+  clip = null;
+  needsTrim = false;
+  trimBox.classList.add('hidden');
+  hideNote();
+  if (!file) return;
+
+  if (file.size > CONFIG.MAX_RAW_MB * 1024 * 1024) {
+    return show(note, `File is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Please choose a file under ${CONFIG.MAX_RAW_MB} MB.`, 'err');
+  }
+
+  drop.classList.add('hidden');
+  previewStage.classList.remove('hidden');
+  fileNameLabel.textContent = file.name || 'Selected clip';
+  fileSizeLabel.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+  fileDurationLabel.textContent = 'Checking duration...';
+  fileDurationLabel.className = 'text-slate-400';
+
+  preview.src = URL.createObjectURL(file);
+  preview.hidden = false;
+
+  preview.onloadedmetadata = () => {
+    const dur = preview.duration;
+    if (isFinite(dur) && dur > CONFIG.MAX_SECONDS + 0.5) {
+      if (file.type.startsWith('video/') && typeof MediaRecorder !== 'undefined') {
+        needsTrim = true;
+        clip = file;
+        const maxStart = Math.max(0, Math.floor((dur - CONFIG.MAX_SECONDS) * 2) / 2);
+        trimSlider.max = String(maxStart);
+        trimSlider.value = '0';
+        trimStart = 0;
+        trimRangeLabel.textContent = `0:00 – ${fmtTime(CONFIG.MAX_SECONDS)}`;
+        trimBox.classList.remove('hidden');
+        fileDurationLabel.textContent = `${dur.toFixed(1)}s (15s window ready)`;
+        fileDurationLabel.className = 'text-amber-400';
+        go.disabled = false;
+        return;
+      } else {
+        fileDurationLabel.textContent = `${Math.round(dur)}s (max ${CONFIG.MAX_SECONDS}s)`;
+        fileDurationLabel.className = 'text-rose-400';
+        show(note, `This audio clip is ${Math.round(dur)}s long. The maximum is ${CONFIG.MAX_SECONDS}s. Please trim it first.`, 'err');
         return;
       }
+    }
 
-      submitBtn.disabled = true;
-      statusEl.textContent = "Analyzing with ClipZam AI...";
+    if (file.size > CONFIG.MAX_MB * 1024 * 1024) {
+      show(note, `File is too big (${(file.size / (1024 * 1024)).toFixed(1)} MB). Keep it under ${CONFIG.MAX_MB} MB.`, 'err');
+      return;
+    }
 
-      try {
-        const parts = [];
-        if (file) {
-          const data = await fileToBase64(file);
-          parts.push({
-            inline_data: {
-              mime_type: file.type || "application/octet-stream",
-              data,
-            },
-          });
-        }
-        parts.push({
-          text:
-            "Identify the movie or TV show (and season/episode if TV) from this clip/clue. " +
-            "Reply ONLY as valid JSON with keys: title, media_type (\"movie\" or \"tv\"), year, overview. " +
-            (clue ? `Extra clue: ${clue}` : ""),
-        });
+    fileDurationLabel.textContent = isFinite(dur) ? `${dur.toFixed(1)}s` : 'Ready';
+    fileDurationLabel.className = 'text-emerald-400';
+    clip = file;
+    go.disabled = false;
+    hideNote();
+  };
 
-        const gemData = await callProxy("gemini", {
-          contents: [{ parts }],
-        });
+  preview.onerror = () => {
+    if (file.size > CONFIG.MAX_MB * 1024 * 1024) {
+      return show(note, `File is too big. Keep it under ${CONFIG.MAX_MB} MB.`, 'err');
+    }
+    fileDurationLabel.textContent = 'Media ready';
+    fileDurationLabel.className = 'text-emerald-400';
+    clip = file;
+    go.disabled = false;
+  };
+}
 
-        const rawText =
-          gemData?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        const cleaned = rawText.replace(/```json|```/gi, "").trim();
-        let guess = null;
-        try {
-          guess = JSON.parse(cleaned);
-        } catch {
-          guess = { title: cleaned || "Unknown", media_type: "movie", year: "", overview: "" };
-        }
+fileInput.addEventListener('change', e => pick(e.target.files[0]));
+['dragover','dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => pick(e.dataTransfer.files[0]));
 
-        let tmdbMatch = null;
-        if (guess.title) {
-          const endpoint = guess.media_type === "tv" ? "/search/tv" : "/search/movie";
-          const tmdbData = await callProxy("tmdb", {
-            path: endpoint,
-            params: { query: guess.title },
-          });
-          tmdbMatch = tmdbData?.results?.[0] || null;
-        }
+async function extract15sSegment(videoEl, startSec) {
+  return new Promise((resolve, reject) => {
+    const stream = videoEl.captureStream ? videoEl.captureStream() : (videoEl.mozCaptureStream ? videoEl.mozCaptureStream() : null);
+    if (!stream) return reject(new Error('Your browser does not support automatic trimming. Please trim the video to 15s first.'));
 
-        const finalTitle =
-          tmdbMatch?.title || tmdbMatch?.name || guess.title || "No match found";
-        const releaseDate =
-          tmdbMatch?.release_date || tmdbMatch?.first_air_date || guess.year || "";
-        const year = releaseDate ? String(releaseDate).slice(0, 4) : "";
-        const typeLabel = guess.media_type === "tv" ? "TV Show" : "Movie";
+    const mimeType = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType, videoBitsPerSecond: 1400000 } : undefined);
+    const chunks = [];
 
-        resultMeta.textContent = [typeLabel, year].filter(Boolean).join(" • ");
-        resultTitle.textContent = finalTitle;
-        resultOverview.textContent =
-          tmdbMatch?.overview || guess.overview || "No synopsis available.";
-        resultCard.style.display = "block";
-        statusEl.textContent = "Done.";
-      } catch (err) {
-        statusEl.textContent = err.message || "Something went wrong.";
-      } finally {
-        submitBtn.disabled = false;
+    recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+    recorder.onerror = () => reject(new Error('Could not extract the 15-second clip segment.'));
+    recorder.onstop = () => {
+      videoEl.pause();
+      resolve(new Blob(chunks, { type: recorder.mimeType || 'video/webm' }));
+    };
+
+    const durationMs = Math.min(CONFIG.MAX_SECONDS, Math.max(1, (videoEl.duration || startSec + CONFIG.MAX_SECONDS) - startSec)) * 1000;
+    videoEl.currentTime = startSec;
+    videoEl.muted = false;
+
+    videoEl.onseeked = () => {
+      videoEl.onseeked = null;
+      recorder.start(250);
+      videoEl.play().catch(() => {
+        videoEl.muted = true;
+        videoEl.play();
+      });
+      setTimeout(() => {
+        if (recorder.state !== 'inactive') recorder.stop();
+      }, durationMs);
+    };
+  });
+}
+
+function toBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(',')[1]);
+    r.onerror = () => rej(new Error('Could not read the file.'));
+    r.readAsDataURL(blob);
+  });
+}
+
+function underLimit() {
+  try {
+    const now = Date.now();
+    const t = JSON.parse(localStorage.getItem('cz_t') || '[]').filter(x => now - x < 3600000);
+    if (t.length >= CONFIG.HOURLY_LIMIT) return false;
+    t.push(now);
+    localStorage.setItem('cz_t', JSON.stringify(t));
+  } catch (e) {}
+  return true;
+}
+
+function startProgress(isTrimming) {
+  scannerOverlay.classList.remove('hidden');
+  progressBarBox.classList.remove('hidden');
+  progressFill.style.width = isTrimming ? '12%' : '22%';
+  progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>${isTrimming ? 'Extracting selected 15s segment...' : 'Watching & listening to clip...'}`;
+
+  progressTimers.push(setTimeout(() => {
+    progressFill.style.width = '58%';
+    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>Analyzing dialogue, cast & cinematography...`;
+  }, isTrimming ? 15500 : 2500));
+
+  progressTimers.push(setTimeout(() => {
+    progressFill.style.width = '84%';
+    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>Verifying match & loading TMDB details...`;
+  }, isTrimming ? 22000 : 9000));
+}
+
+function stopProgress() {
+  progressTimers.forEach(clearTimeout);
+  progressTimers = [];
+  scannerOverlay.classList.add('hidden');
+  progressBarBox.classList.add('hidden');
+}
+
+async function identifyOnServer(mediaBlob) {
+  const mediaBase64 = await toBase64(mediaBlob);
+  const clue = clueInput ? clueInput.value.trim() : '';
+
+  const res = await fetch(CONFIG.API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      mediaBase64,
+      mimeType: mediaBlob.type || 'video/mp4',
+      clue
+    })
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.error || 'Could not identify this clip.');
+  }
+  return data;
+}
+
+go.addEventListener('click', async () => {
+  if (!clip) return;
+  if (!underLimit()) return show(note, 'You have used your clips for this hour. Please try again later.', 'err');
+
+  go.disabled = true;
+  goLabel.textContent = 'Analyzing...';
+  out.innerHTML = '';
+  hideNote();
+  startProgress(needsTrim);
+
+  try {
+    let payloadBlob = clip;
+    if (needsTrim) {
+      payloadBlob = await extract15sSegment(preview, trimStart);
+      if (payloadBlob.size > CONFIG.MAX_MB * 1024 * 1024) {
+        throw new Error('Trimmed segment is still over 10 MB. Try a lower-resolution video.');
       }
-    });
-  </script>
+    }
+
+    const d = await identifyOnServer(payloadBlob);
+    stopProgress();
+
+    if (d.identified) {
+      addSessionMatch(d);
+    }
+    render(d);
+    out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  } catch (e) {
+    stopProgress();
+    show(note, e.message || 'Something went wrong.', 'err');
+  } finally {
+    go.disabled = false;
+    goLabel.textContent = 'Identify Clip';
+  }
+});
+
+function addSessionMatch(d) {
+  if (sessionMatches.length && sessionMatches[0].title === d.title && sessionMatches[0].episode === d.episode) return;
+  sessionMatches.unshift(d);
+  if (sessionMatches.length > 3) sessionMatches.pop();
+  renderSessionPills();
+}
+
+function renderSessionPills() {
+  const bar = $('sessionPillBar');
+  if (sessionMatches.length <= 1) {
+    bar.classList.add('hidden');
+    bar.classList.remove('flex');
+    return;
+  }
+  bar.classList.remove('hidden');
+  bar.classList.add('flex');
+  bar.innerHTML = sessionMatches.map((m, idx) => `
+    <button type="button" onclick="render(sessionMatches[${idx}])" class="shrink-0 px-2.5 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-[11px] text-slate-300 truncate max-w-[130px] cursor-pointer transition-colors">
+      ${esc(m.title)}
+    </button>
+  `).join('');
+}
+
+function openTrailer(key, title) {
+  $('trailerTitle').textContent = `${title} — Trailer`;
+  $('trailerFrame').src = `https://www.youtube.com/embed/${encodeURIComponent(key)}?autoplay=1&rel=0`;
+  $('trailerModal').classList.remove('hidden');
+  $('trailerModal').classList.add('flex');
+}
+function closeTrailer() {
+  $('trailerFrame').src = '';
+  $('trailerModal').classList.add('hidden');
+  $('trailerModal').classList.remove('flex');
+}
+$('closeTrailerBtn').addEventListener('click', closeTrailer);
+$('trailerModal').addEventListener('click', e => { if (e.target === $('trailerModal')) closeTrailer(); });
+
+async function shareMatch() {
+  const d = currentRenderedMatch;
+  if (!d) return;
+  const seText = d.season && d.episode ? ` (S${d.season} E${d.episode})` : '';
+  const pct = Math.round((d.confidence || 0) * 100);
+  const text = `Identified with ClipZam AI: ${d.title}${d.year ? ` (${d.year})` : ''}${seText} — ${pct}% match`;
+  const url = d.tmdb_url || window.location.href;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: d.title, text, url });
+      return;
+    } catch (e) {}
+  }
+  const ta = document.createElement('textarea');
+  ta.value = `${text} ${d.tmdb_url ? d.tmdb_url : ''}`.trim();
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+
+  const btn = $('shareBtn');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<span class="text-emerald-400">Copied!</span>`;
+    setTimeout(() => { btn.innerHTML = orig; }, 1800);
+  }
+}
+
+function render(d) {
+  currentRenderedMatch = d;
+
+  if (!d.identified) {
+    out.innerHTML = `
+      <div class="animate-fade-up bg-surface border border-white/[0.08] rounded-2xl p-6 text-center">
+        <p class="font-display font-bold text-base text-white mb-1">Could not identify this clip</p>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-sm mx-auto">
+          Try a segment with clearer spoken dialogue, recognizable faces, or distinctive background music.
+        </p>
+      </div>`;
+    return;
+  }
+
+  const pct = Math.round((d.confidence || 0) * 100);
+  const seBadge = d.season && d.episode
+    ? `<span class="px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/30 text-[#38F2FF] font-mono text-xs font-semibold">S${esc(d.season)} · E${esc(d.episode)}</span>`
+    : '';
+
+  const poster = d.poster
+    ? `<img src="${esc(d.poster)}" alt="${esc(d.title)}" class="w-24 sm:w-32 aspect-[2/3] object-cover rounded-xl border border-white/10 shadow-xl shrink-0 bg-elevated">`
+    : `<div class="w-24 sm:w-32 aspect-[2/3] rounded-xl border border-white/10 bg-elevated flex items-center justify-center text-[11px] font-mono text-slate-500 shrink-0 text-center p-2">No Poster</div>`;
+
+  const providersHtml = (d.providers && d.providers.length)
+    ? `<div class="flex flex-wrap items-center gap-2 pt-1">
+         <span class="text-[11px] font-mono uppercase tracking-wider text-slate-500">Stream:</span>
+         ${d.providers.map(p => `
+           <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-elevated border border-white/[0.08] text-xs text-slate-200">
+             ${p.logo ? `<img src="${esc(p.logo)}" alt="" class="w-4 h-4 rounded">` : ''}
+             <span>${esc(p.name)}</span>
+           </span>
+         `).join('')}
+       </div>`
+    : '';
+
+  const charactersHtml = (d.characters && d.characters.length)
+    ? `<div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+         ${d.characters.map(c => `<span class="px-2 py-0.5 rounded-md bg-white/[0.05] text-[11px] text-slate-300">${esc(c)}</span>`).join('')}
+       </div>`
+    : '';
+
+  const dialogueHtml = (d.dialogue && d.dialogue.length)
+    ? `<div class="mt-3 pt-3 border-t border-white/[0.06] space-y-1">
+         ${d.dialogue.map(line => `<p class="text-xs italic text-slate-300 pl-2.5 border-l-2 border-[#00E5FF]/60">“${esc(line)}”</p>`).join('')}
+       </div>`
+    : '';
+
+  const sim = (d.similar || []).map(s => `
+    <div class="flex-none w-24 sm:w-28">
+      <div class="aspect-[2/3] w-full rounded-xl overflow-hidden bg-elevated border border-white/[0.07] mb-1.5">
+        ${s.poster
+          ? `<img src="${esc(s.poster)}" alt="${esc(s.title)}" class="w-full h-full object-cover">`
+          : `<div class="w-full h-full flex items-center justify-center p-2 text-center text-[11px] text-slate-500">${esc(s.title)}</div>`}
+      </div>
+      <div class="text-xs font-medium text-slate-200 leading-snug line-clamp-2">${esc(s.title)}</div>
+      ${s.year ? `<div class="text-[11px] font-mono text-slate-500">${esc(s.year)}</div>` : ''}
+    </div>
+  `).join('');
+
+  out.innerHTML = `
+    <article class="result animate-fade-up bg-surface border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
+      <div class="p-4 sm:p-6 flex gap-4 sm:gap-5 items-start border-b border-white/[0.06]">
+        ${poster}
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
+            <span class="px-2 py-0.5 rounded-md bg-white/[0.07] font-mono text-[11px] font-semibold uppercase text-slate-300">
+              ${d.type === 'tv' ? 'TV Series' : 'Movie'}
+            </span>
+            ${d.year ? `<span class="font-mono text-xs text-slate-400">${esc(d.year)}</span>` : ''}
+            ${d.rating ? `<span class="font-mono text-xs text-amber-400">★ ${esc(d.rating)}</span>` : ''}
+            ${seBadge}
+          </div>
+
+          <h2 class="font-display font-extrabold text-xl sm:text-2xl text-white leading-tight break-words">
+            ${esc(d.title)}
+          </h2>
+
+          ${d.scene_context ? `<p class="text-xs text-[#38F2FF] font-medium mt-1">${esc(d.scene_context)}</p>` : ''}
+
+          <div class="mt-3 max-w-[220px]">
+            <div class="flex justify-between text-[11px] font-mono mb-1">
+              <span class="text-slate-400">Match</span>
+              <span class="font-semibold ${pct >= 80 ? 'text-emerald-400' : 'text-[#38F2FF]'}">${pct}%</span>
+            </div>
+            <div class="h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden">
+              <div class="h-full rounded-full ${pct >= 80 ? 'bg-emerald-400' : 'brand-gradient-bg'}" style="width:${pct}%"></div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap items-center gap-2">
+            ${d.trailer_key ? `
+              <button type="button" onclick="openTrailer('${esc(d.trailer_key)}', '${esc(d.title).replace(/'/g, "\'")}')" class="min-h-[38px] px-3 py-1.5 rounded-xl brand-gradient-bg text-xs font-semibold text-white inline-flex items-center gap-1.5 cursor-pointer transition-all">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Trailer</span>
+              </button>` : ''}
+            ${d.tmdb_url ? `
+              <a href="${esc(d.tmdb_url)}" target="_blank" rel="noopener" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-200 inline-flex items-center gap-1 transition-colors">
+                <span>TMDB</span>
+                <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>` : ''}
+            <button id="shareBtn" type="button" onclick="shareMatch()" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-200 inline-flex items-center gap-1.5 cursor-pointer transition-colors">
+              <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span>Share</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-5 text-sm">
+        ${providersHtml}
+
+        ${(d.evidence || dialogueHtml || charactersHtml) ? `
+          <div class="rounded-xl bg-elevated/80 border border-white/[0.07] p-3.5 sm:p-4">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">How we knew</div>
+            ${d.evidence ? `<p class="text-xs sm:text-sm text-slate-200 leading-relaxed">${esc(d.evidence)}</p>` : ''}
+            ${charactersHtml}
+            ${dialogueHtml}
+          </div>
+        ` : ''}
+
+        ${d.episode_title ? `
+          <div class="space-y-2.5">
+            <h3 class="font-display font-bold text-sm sm:text-base text-white">Episode: ${esc(d.episode_title)}</h3>
+            ${d.episode_overview ? `<p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${esc(d.episode_overview)}</p>` : ''}
+            ${d.episode_still ? `<img src="${esc(d.episode_still)}" alt="${esc(d.episode_title)}" class="w-full rounded-xl border border-white/[0.08] max-h-64 object-cover">` : ''}
+          </div>
+        ` : ''}
+
+        ${d.overview ? `
+          <div>
+            <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-400 mb-1.5">About</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${esc(d.overview)}</p>
+          </div>
+        ` : ''}
+
+        ${sim ? `
+          <div>
+            <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-400 mb-2.5">Similar titles</h3>
+            <div class="shelf-scroll flex gap-3 overflow-x-auto pb-1">${sim}</div>
+          </div>
+        ` : ''}
+      </div>
+    </article>`;
+}
+</script>
 </body>
 </html>
