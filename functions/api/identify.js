@@ -28,30 +28,40 @@ function parseJSON(text) {
 }
 
 async function callGemini(apiKey, model, body) {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent( model )}:generateContent`,
-    {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+  const payload = JSON.stringify(body);
+  const maxAttempts = 3;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const res = await fetch(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "x-goog-api-key": apiKey,
       },
-      body: JSON.stringify(body),
-    }
-  );
+      body: payload,
+    });
 
-  if (res.status === 429) {
-    throw new Error("The AI quota is used up for now. Please try again later.");
-  }
-    if (!res.ok) {
-    const errBody = await res.text().catch(() => "");
-    throw new Error(
-      `Gemini ${res.status} (${model}): ${errBody.slice(0, 220)}`
-    );
+    if (res.status === 429) {
+      throw new Error("The AI quota is used up for now. Please try again later.");
     }
-  const json = await res.json();
-  const parts = json?.candidates?.[0]?.content?.parts || [];
-  return parts.map((p) => p.text || "").join("");
+
+    if (res.status === 503 && attempt < maxAttempts) {
+      await new Promise((r) => setTimeout(r, attempt * 1200));
+      continue;
+    }
+
+    if (!res.ok) {
+      const errBody = await res.text().catch(() => "");
+      throw new Error(
+        `Gemini ${res.status} (${model}): ${errBody.slice(0, 220)}`
+      );
+    }
+
+    const json = await res.json();
+    const parts = json?.candidates?.[0]?.content?.parts || [];
+    return parts.map((p) => p.text || "").join("");
+  }
 }
 
 async function verifyWithWebSearch(apiKey, model, guessObj, clue) {
