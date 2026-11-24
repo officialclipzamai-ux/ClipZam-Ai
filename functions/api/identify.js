@@ -1,3 +1,10 @@
+import {
+  consumeDailyScan,
+  getLimits,
+  getSubscriptionState,
+  normalizeEmail,
+} from "./_sub.js";
+
 const IMG = "https://image.tmdb.org/t/p/w500";
 const MIME_FIX = {
   "video/quicktime": "video/mov",
@@ -85,10 +92,9 @@ async function callGemini(apiKey, modelOrList, body) {
   throw lastError || new Error("All Gemini models are currently busy. Please try again.");
 }
 
-
 async function verifyWithWebSearch(apiKey, model, guessObj, clue) {
   const lines = (guessObj.dialogue || []).map((l) => `"${l}"`).join(" / ");
-  const prompt = `A short clip contains these spoken lines: ${lines} ${clue ? `Additional user clues: ${clue}\n` : ""}Initial guess: ${ guessObj.title ? `${guessObj.title} (${guessObj.type || "?"})` : "none" }. Use web search to find which movie or TV episode these lines come from. Reply with ONLY JSON: {"title":"official English title or null","year":number or null,"type":"movie" or "tv","season":number or null,"episode":number or null,"confidence":number 0-1} Do not guess. If the search does not confirm it, set title to null.`;
+  const prompt = `A short clip contains these spoken lines: ${lines} ${clue ? `Additional user clues: ${clue}\n` : ""}Initial guess: ${guessObj.title ? `${guessObj.title} (${guessObj.type || "?"})` : "none"}. Use web search to find which movie or TV episode these lines come from. Reply with ONLY JSON: {"title":"official English title or null","year":number or null,"type":"movie" or "tv","season":number or null,"episode":number or null,"confidence":number 0-1} Do not guess. If the search does not confirm it, set title to null.`;
 
   const rawText = await callGemini(apiKey, model, {
     contents: [{ parts: [{ text: prompt }] }],
@@ -273,15 +279,15 @@ export async function onRequestPost(context) {
     const apiKey = env.GEMINI_API_KEY;
     const tmdbToken = env.TMDB_TOKEN;
     const primaryModel = env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-const modelCandidates = [
-  ...new Set([
-    primaryModel,
-    "gemini-3.5-flash-lite",
-    "gemini-4-hydrogen",
-    "gemini-3.8-flash",
-  ]),
-];
-    
+    const modelCandidates = [
+      ...new Set([
+        primaryModel,
+        "gemini-3.5-flash-lite",
+        "gemini-4-hydrogen",
+        "gemini-3.8-flash",
+      ]),
+    ];
+
     if (!apiKey) {
       return jsonResponse(
         { error: "Server missing GEMINI_API_KEY secret." },
@@ -290,6 +296,28 @@ const modelCandidates = [
     }
 
     const body = await request.json();
+    const email =
+      normalizeEmail(body?.email) ||
+      normalizeEmail(request.headers.get("x-user-email") || "");
+
+    const sub = await getSubscriptionState(env, email);
+    const usage = await consumeDailyScan(env, email, sub.dailyLimit);
+
+    if (!usage.allowed) {
+      const { proDailyLimit } = getLimits(env);
+      return jsonResponse(
+        {
+          error: sub.isPro
+            ? `Daily Pro fair-use limit reached (${usage.limit} scans/day). Your quota resets tomorrow.`
+            : `Daily free limit reached (${usage.limit} scans/day). Upgrade to Pro (₦${sub.proMonthlyNgn}/month) for 30 days of ${proDailyLimit} scans/day.`,
+          code: "DAILY_LIMIT_REACHED",
+          subscription: sub,
+          usage,
+        },
+        429
+      );
+    }
+
     const mediaBase64 = body?.mediaBase64;
     const clue = typeof body?.clue === "string" ? body.clue.trim() : "";
 
@@ -310,7 +338,6 @@ const modelCandidates = [
       : basePrompt;
 
     const rawGeminiText = await callGemini(apiKey, modelCandidates, {
-      
       contents: [
         {
           parts: [
@@ -340,16 +367,23 @@ const modelCandidates = [
     ) {
       try {
         guessObj = await verifyWithWebSearch(apiKey, modelCandidates[0], guessObj, clue);
-        
       } catch (_) {}
     }
 
     const enriched = await enrichWithTmdb(tmdbToken, guessObj);
-    return jsonResponse(enriched, 200);
+    return jsonResponse(
+      {
+        ...enriched,
+        subscription: sub,
+        usage,
+      },
+      200
+    );
   } catch (err) {
     return jsonResponse(
       { error: err?.message || "Identification failed." },
       500
     );
   }
-}
+    }
+                                                      
