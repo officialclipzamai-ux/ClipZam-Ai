@@ -556,7 +556,11 @@ function startProgress(isTrimming) {
 function stopProgress() {
   progressTimers.forEach(clearTimeout);
   progressTimers = [];
-  async function identifyOnServer(mediaBlob) {
+  scannerOverlay.classList.add('hidden');
+  progressBarBox.classList.add('hidden');
+}
+
+async function identifyOnServer(mediaBlob) {
   const mediaBase64 = await toBase64(mediaBlob);
   const clue = clueInput ? clueInput.value.trim() : '';
   const cleanMime = String(mediaBlob.type || 'video/mp4').split(';')[0].trim() || 'video/mp4';
@@ -570,11 +574,7 @@ function stopProgress() {
       clue
     })
   });
-      mimeType: mediaBlob.type || 'video/mp4',
-      clue
-    })
-  });
-
+  
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(data.error || 'Could not identify this clip.');
