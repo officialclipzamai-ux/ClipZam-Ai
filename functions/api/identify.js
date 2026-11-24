@@ -309,7 +309,8 @@ const modelCandidates = [
       ? `${basePrompt}\nAdditional user clues (dialogue, scene details, or actors): ${clue}`
       : basePrompt;
 
-    const rawGeminiText = await callGemini(apiKey, model, {
+    const rawGeminiText = await callGemini(apiKey, modelCandidates, {
+      
       contents: [
         {
           parts: [
@@ -338,7 +339,8 @@ const modelCandidates = [
       (guessObj.confidence || 0) < 0.8
     ) {
       try {
-        guessObj = await verifyWithWebSearch(apiKey, model, guessObj, clue);
+        guessObj = await verifyWithWebSearch(apiKey, modelCandidates[0], guessObj, clue);
+        
       } catch (_) {}
     }
 
