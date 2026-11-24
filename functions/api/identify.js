@@ -26,44 +26,65 @@ function parseJSON(text) {
   }
   return null;
 }
-import { getSubscriptionStatus, normalizeEmail } from "./_sub.js";
 
-async function callGemini(apiKey, model, body) {
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
+async function callGemini(apiKey, modelOrList, body) {
+  const models = Array.isArray(modelOrList)
+    ? modelOrList.filter(Boolean)
+    : [modelOrList].filter(Boolean);
+
   const payload = JSON.stringify(body);
-  const maxAttempts = 2;
+  const maxRetriesPerModel = 1;
+  let lastError = null;
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": apiKey,
-      },
-      body: payload,
-    });
+  for (const model of models) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
 
-    if (res.status === 429) {
-      throw new Error("The AI quota is used up for now. Please try again later.");
+    for (let attempt = 1; attempt <= 1 + maxRetriesPerModel; attempt++) {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": apiKey,
+        },
+        body: payload,
+      });
+
+      if (res.status === 429) {
+        lastError = new Error(
+          "The AI quota is used up for now. Please try again later."
+        );
+        break;
+      }
+
+      if (res.status === 503) {
+        lastError = new Error(
+          `Gemini 503 (${model}): This model is currently experiencing high demand.`
+        );
+        if (attempt <= maxRetriesPerModel) {
+          await new Promise((r) => setTimeout(r, 400));
+          continue;
+        }
+        break;
+      }
+
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => "");
+        lastError = new Error(
+          `Gemini ${res.status} (${model}): ${errBody.slice(0, 220)}`
+        );
+        if (res.status === 404 || res.status === 400) break;
+        throw lastError;
+      }
+
+      const json = await res.json();
+      const parts = json?.candidates?.[0]?.content?.parts || [];
+      return parts.map((p) => p.text || "").join("");
     }
-
-    if (res.status === 503 && attempt < maxAttempts) {
-      await new Promise((r) => setTimeout(r, 500));
-      continue;
-    }
-
-    if (!res.ok) {
-      const errBody = await res.text().catch(() => "");
-      throw new Error(
-        `Gemini ${res.status} (${model}): ${errBody.slice(0, 220)}`
-      );
-    }
-
-        const json = await res.json();
-    const parts = json?.candidates?.[0]?.content?.parts || [];
-    return parts.map((p) => p.text || "").join("");
   }
+
+  throw lastError || new Error("All Gemini models are currently busy. Please try again.");
 }
+
 
 async function verifyWithWebSearch(apiKey, model, guessObj, clue) {
   const lines = (guessObj.dialogue || []).map((l) => `"${l}"`).join(" / ");
