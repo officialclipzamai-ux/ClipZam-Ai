@@ -26,6 +26,7 @@ function parseJSON(text) {
   }
   return null;
 }
+import { getSubscriptionStatus, normalizeEmail } from "./_sub.js";
 
 async function callGemini(apiKey, model, body) {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
