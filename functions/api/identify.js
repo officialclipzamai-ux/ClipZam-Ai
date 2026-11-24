@@ -30,7 +30,7 @@ function parseJSON(text) {
 async function callGemini(apiKey, model, body) {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const payload = JSON.stringify(body);
-  const maxAttempts = 3;
+  const maxAttempts = 2;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     const res = await fetch(endpoint, {
@@ -47,7 +47,7 @@ async function callGemini(apiKey, model, body) {
     }
 
     if (res.status === 503 && attempt < maxAttempts) {
-      await new Promise((r) => setTimeout(r, attempt * 1200));
+      await new Promise((r) => setTimeout(r, 500));
       continue;
     }
 
@@ -57,6 +57,12 @@ async function callGemini(apiKey, model, body) {
         `Gemini ${res.status} (${model}): ${errBody.slice(0, 220)}`
       );
     }
+
+    const json = await res.json();
+    const parts = json?.candidates?.[0]?.content?.parts || [];
+    return parts.map((p) => p.text || "").join("");
+  }
+}
 
     const json = await res.json();
     const parts = json?.candidates?.[0]?.content?.parts || [];
