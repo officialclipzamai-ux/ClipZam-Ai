@@ -58,13 +58,7 @@ async function callGemini(apiKey, model, body) {
       );
     }
 
-    const json = await res.json();
-    const parts = json?.candidates?.[0]?.content?.parts || [];
-    return parts.map((p) => p.text || "").join("");
-  }
-}
-
-    const json = await res.json();
+        const json = await res.json();
     const parts = json?.candidates?.[0]?.content?.parts || [];
     return parts.map((p) => p.text || "").join("");
   }
