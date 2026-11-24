@@ -43,12 +43,12 @@ async function callGemini(apiKey, model, body) {
   if (res.status === 429) {
     throw new Error("The AI quota is used up for now. Please try again later.");
   }
-  if (!res.ok) {
+    if (!res.ok) {
+    const errBody = await res.text().catch(() => "");
     throw new Error(
-      "The AI service could not analyze this clip. Try another clip."
+      `Gemini ${res.status} (${model}): ${errBody.slice(0, 220)}`
     );
-  }
-
+    }
   const json = await res.json();
   const parts = json?.candidates?.[0]?.content?.parts || [];
   return parts.map((p) => p.text || "").join("");
