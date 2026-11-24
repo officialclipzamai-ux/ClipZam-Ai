@@ -515,12 +515,16 @@ async function extract15sSegment(videoEl, startSec) {
 function toBase64(blob) {
   return new Promise((res, rej) => {
     const r = new FileReader();
-    r.onload = () => res(String(r.result).split(',')[1]);
+    r.onload = () => {
+      const raw = String(r.result || '');
+      const idx = raw.indexOf(';base64,');
+      const b64 = idx !== -1 ? raw.slice(idx + 8) : (raw.split(',')[1] || '');
+      res(b64.replace(/[^A-Za-z0-9+/=]/g, ''));
+    };
     r.onerror = () => rej(new Error('Could not read the file.'));
     r.readAsDataURL(blob);
   });
-}
-
+        }
 function underLimit() {
   try {
     const now = Date.now();
@@ -552,19 +556,20 @@ function startProgress(isTrimming) {
 function stopProgress() {
   progressTimers.forEach(clearTimeout);
   progressTimers = [];
-  scannerOverlay.classList.add('hidden');
-  progressBarBox.classList.add('hidden');
-}
-
-async function identifyOnServer(mediaBlob) {
+  async function identifyOnServer(mediaBlob) {
   const mediaBase64 = await toBase64(mediaBlob);
   const clue = clueInput ? clueInput.value.trim() : '';
+  const cleanMime = String(mediaBlob.type || 'video/mp4').split(';')[0].trim() || 'video/mp4';
 
   const res = await fetch(CONFIG.API_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       mediaBase64,
+      mimeType: cleanMime,
+      clue
+    })
+  });
       mimeType: mediaBlob.type || 'video/mp4',
       clue
     })
