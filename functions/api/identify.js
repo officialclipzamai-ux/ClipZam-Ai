@@ -250,7 +250,7 @@ export async function onRequestPost(context) {
     const { request, env } = context;
     const apiKey = env.GEMINI_API_KEY;
     const tmdbToken = env.TMDB_TOKEN;
-    const model = env.GEMINI_MODEL || "gemini-3.8-flash";
+    const model = env.GEMINI_MODEL || "gemini-4-hydrogen";
 
     if (!apiKey) {
       return jsonResponse(
