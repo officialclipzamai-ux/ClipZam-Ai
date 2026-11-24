@@ -272,8 +272,16 @@ export async function onRequestPost(context) {
     const { request, env } = context;
     const apiKey = env.GEMINI_API_KEY;
     const tmdbToken = env.TMDB_TOKEN;
-    const model = env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-
+    const primaryModel = env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+const modelCandidates = [
+  ...new Set([
+    primaryModel,
+    "gemini-3.5-flash-lite",
+    "gemini-4-hydrogen",
+    "gemini-3.8-flash",
+  ]),
+];
+    
     if (!apiKey) {
       return jsonResponse(
         { error: "Server missing GEMINI_API_KEY secret." },
