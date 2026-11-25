@@ -6,7 +6,7 @@
 <title>ClipZam AI — Find any movie or show from a clip</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -19,12 +19,12 @@
           mono: ['JetBrains Mono', 'monospace'],
         },
         colors: {
-          obsidian: '#08090D',
-          surface: '#11131B',
-          elevated: '#181B26',
-          cinema: {
-            DEFAULT: '#00D4FF',
-            hover: '#2979FF',
+          obsidian: '#060913',
+          surface: '#0B1221',
+          elevated: '#111B33',
+          accent: {
+            DEFAULT: '#1D8BFF',
+            cyan: '#00D4FF',
             violet: '#7C3AED'
           }
         }
@@ -34,11 +34,9 @@
 </script>
 <style>
   :root {
-    --bg: #08090D;
-    --surface: #11131B;
-    --elevated: #181B26;
-    --accent: #00D4FF;
-    --accent-violet: #7C3AED;
+    --bg: #060913;
+    --surface: #0B1221;
+    --elevated: #111B33;
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -47,43 +45,39 @@
     margin: 0;
     min-height: 100dvh;
     background-color: var(--bg);
-    color: #F4F5F8;
+    color: #F4F7FC;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 
-  .ambient-glow {
-    position: fixed;
-    top: -160px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: min(760px, 120vw);
-    height: 360px;
-    background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.11) 0%, rgba(124, 58, 237, 0.08) 48%, transparent 75%);
-    pointer-events: none;
-    z-index: 0;
+  .hero-glow {
+    background:
+      radial-gradient(ellipse 65% 55% at 78% 35%, rgba(29, 139, 255, 0.24), rgba(0, 212, 255, 0.08) 48%, transparent 75%),
+      radial-gradient(ellipse 45% 45% at 15% 15%, rgba(124, 58, 237, 0.14), transparent 70%);
   }
 
-  .brand-gradient-bg {
-    background: linear-gradient(135deg, #00E5FF 0%, #2979FF 52%, #7C3AED 100%);
+  .btn-primary-blue {
+    background: linear-gradient(135deg, #1E90FF 0%, #1668E3 100%);
+    box-shadow: 0 8px 24px -6px rgba(30, 144, 255, 0.45);
   }
-  .brand-gradient-bg:hover {
-    background: linear-gradient(135deg, #29EEFF 0%, #3B82F6 52%, #8B5CF6 100%);
+  .btn-primary-blue:hover {
+    background: linear-gradient(135deg, #339CFF 0%, #1D75F5 100%);
   }
-  .brand-gradient-text {
-    background: linear-gradient(95deg, #00F0FF 0%, #2979FF 50%, #8B5CF6 100%);
+
+  .text-gradient-cyan {
+    background: linear-gradient(90deg, #27A6FF 0%, #00E5FF 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .drop-zone {
     transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-    background: rgba(17, 19, 27, 0.75);
+    background: rgba(11, 18, 33, 0.72);
   }
   .drop-zone:hover, .drop-zone.over {
-    border-color: #00D4FF;
-    background: rgba(0, 212, 255, 0.05);
+    border-color: #27A6FF;
+    background: rgba(30, 144, 255, 0.08);
   }
 
   input[type="range"].trim-slider {
@@ -101,29 +95,29 @@
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00E5FF, #7C3AED);
+    background: linear-gradient(135deg, #27A6FF, #1668E3);
     border: 2px solid #fff;
-    box-shadow: 0 2px 10px rgba(0, 212, 255, 0.55);
+    box-shadow: 0 2px 10px rgba(39, 166, 255, 0.6);
     cursor: pointer;
   }
   input[type="range"].trim-slider::-moz-range-thumb {
     width: 22px;
     height: 22px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #00E5FF, #7C3AED);
+    background: linear-gradient(135deg, #27A6FF, #1668E3);
     border: 2px solid #fff;
-    box-shadow: 0 2px 10px rgba(0, 212, 255, 0.55);
+    box-shadow: 0 2px 10px rgba(39, 166, 255, 0.6);
     cursor: pointer;
   }
 
   .shelf-scroll {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
   }
   .shelf-scroll::-webkit-scrollbar { height: 5px; }
   .shelf-scroll::-webkit-scrollbar-track { background: transparent; }
-  .shelf-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 999px; }
+  .shelf-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 999px; }
 
   @keyframes scanLine {
     0% { top: 0%; opacity: 0; }
@@ -136,7 +130,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #00F0FF, #7C3AED, #00F0FF, transparent);
+    background: linear-gradient(90deg, transparent, #00E5FF, #27A6FF, #00E5FF, transparent);
     box-shadow: 0 0 14px 2px rgba(0, 229, 255, 0.75);
     animation: scanLine 2.1s ease-in-out infinite;
     pointer-events: none;
@@ -148,193 +142,305 @@
     to { opacity: 1; transform: translateY(0); }
   }
   .animate-fade-up {
-    animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeUp 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 </style>
 </head>
-<body class="flex flex-col selection:bg-cyan-400/25 selection:text-white">
+<body class="flex flex-col selection:bg-sky-500/25 selection:text-white">
 
-  <div class="ambient-glow" aria-hidden="true"></div>
+  <!-- Top Navigation -->
+  <header class="sticky top-0 z-30 border-b border-white/[0.08] bg-obsidian/90 backdrop-blur-xl">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button id="mobileMenuBtn" type="button" aria-label="Open menu" class="md:hidden min-w-[38px] min-h-[38px] rounded-xl bg-surface hover:bg-elevated border border-white/[0.08] flex items-center justify-center text-slate-200 cursor-pointer">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
 
-  <header class="relative z-10 border-b border-white/[0.06] bg-obsidian/85 backdrop-blur-xl sticky top-0">
-    <div class="max-w-[680px] mx-auto px-4 sm:px-6 h-16 sm:h-[70px] flex items-center justify-between gap-3">
-      <a href="#" id="brandReset" aria-label="ClipZam Home" class="inline-flex items-center group focus:outline-none shrink-0">
-        <svg class="h-9 sm:h-11 w-auto block overflow-visible transition-transform duration-200 group-hover:scale-[1.015]" viewBox="0 0 430 112" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClipZam">
-          <defs>
-            <linearGradient id="czMainGrad" x1="8" y1="20" x2="104" y2="96" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#00F5FF"/>
-              <stop offset="48%" stop-color="#2979FF"/>
-              <stop offset="100%" stop-color="#7C3AED"/>
-            </linearGradient>
-            <linearGradient id="czZamGrad" x1="258" y1="26" x2="424" y2="86" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#00F5FF"/>
-              <stop offset="45%" stop-color="#2979FF"/>
-              <stop offset="100%" stop-color="#7C3AED"/>
-            </linearGradient>
-            <linearGradient id="czPlayGrad" x1="44" y1="38" x2="74" y2="74" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stop-color="#38F9FF"/>
-              <stop offset="55%" stop-color="#2979FF"/>
-              <stop offset="100%" stop-color="#7C3AED"/>
-            </linearGradient>
-            <filter id="czGlow" x="-16%" y="-16%" width="132%" height="132%">
-              <feDropShadow dx="0" dy="0" stdDeviation="2.4" flood-color="#00E5FF" flood-opacity="0.32"/>
-            </filter>
-          </defs>
+        <a href="#home" id="brandHomeLink" class="inline-flex items-center gap-2.5 shrink-0 focus:outline-none">
+          <span class="w-8 h-8 rounded-lg btn-primary-blue flex items-center justify-center text-white shrink-0">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          </span>
+          <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-white">
+            Clip<span class="text-gradient-cyan">Zam</span>
+          </span>
+        </a>
+      </div>
 
-          <g filter="url(#czGlow)">
-            <path d="M12 31V19C12 14.5817 15.5817 11 20 11H32" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M80 11H92C96.4183 11 100 14.5817 100 19V31" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 81V93C12 97.4183 15.5817 101 20 101H32" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M80 101H92C96.4183 101 100 97.4183 100 93V81" stroke="url(#czMainGrad)" stroke-width="5.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="56" cy="56" r="39" stroke="url(#czMainGrad)" stroke-width="4.4" stroke-linecap="round" stroke-dasharray="106 10 3 10 72 10 3 10" transform="rotate(-118 56 56)"/>
-            <circle cx="56" cy="56" r="30.5" stroke="url(#czMainGrad)" stroke-width="4.2" stroke-linecap="round" stroke-dasharray="78 9 3 9 62 9 3 9" transform="rotate(24 56 56)"/>
-            <circle cx="56" cy="56" r="22" stroke="url(#czMainGrad)" stroke-width="4.0" stroke-linecap="round" stroke-dasharray="64 11 3 11 36 13" transform="rotate(-48 56 56)"/>
-            <path d="M47.5 41.2C47.5 38.7 50.25 37.18 52.38 38.48L72.6 50.82C74.64 52.06 74.64 55.02 72.6 56.26L52.38 68.6C50.25 69.9 47.5 68.38 47.5 65.88V41.2Z" fill="url(#czPlayGrad)" stroke="#7DF9FF" stroke-opacity="0.45" stroke-width="1.2"/>
-          </g>
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+        <button type="button" data-nav="home" class="nav-link px-3.5 py-2 rounded-xl text-white bg-white/[0.08] cursor-pointer transition-colors">Home</button>
+        <button type="button" data-nav="pricing" class="nav-link px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.05] cursor-pointer transition-colors">Pricing</button>
+      </nav>
 
-          <g>
-            <path d="M161.2 44.5C158.1 40.9 153.6 39 148.2 39C138.2 39 131.4 46.2 131.4 56.2C131.4 66.2 138.2 73.4 148.2 73.4C153.6 73.4 158.1 71.5 161.2 67.9L169.3 75.2C164.2 81.2 156.7 84.4 147.8 84.4C131.3 84.4 119.4 72.7 119.4 56.2C119.4 39.7 131.3 28 147.8 28C156.7 28 164.2 31.2 169.3 37.2L161.2 44.5Z" fill="#FFFFFF"/>
-            <rect x="176.5" y="27.5" width="11.2" height="55.8" rx="3.2" fill="#FFFFFF"/>
-            <circle cx="203.2" cy="32.2" r="6.3" fill="#FFFFFF"/>
-            <rect x="197.6" y="43.8" width="11.2" height="39.5" rx="3.2" fill="#FFFFFF"/>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M218.2 43.8H228.8V48.6C231.6 45.1 235.9 43 241.3 43C252.4 43 260.4 51.3 260.4 63.5C260.4 75.7 252.4 84 241.3 84C236.2 84 232.1 82.1 229.4 78.9V97.5H218.2V43.8ZM239.3 73.8C245.3 73.8 249.3 69.5 249.3 63.5C249.3 57.5 245.3 53.2 239.3 53.2C233.3 53.2 229.3 57.5 229.3 63.5C229.3 69.5 233.3 73.8 239.3 73.8Z" fill="#FFFFFF"/>
-            <g fill="url(#czZamGrad)">
-              <path d="M266.5 29H315.5L304.2 39.8H266.5V29Z"/>
-              <path d="M318.8 31.2L281.4 72.5H318.8V83.3H265.2V73.8L303.2 31.2H318.8Z"/>
-            </g>
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M352.6 43.8H363.6V83.3H352.6V78.6C349.8 82.1 345.5 84.1 340.1 84.1C329.2 84.1 321.4 75.8 321.4 63.5C321.4 51.2 329.2 43 340.1 43C345.5 43 349.8 45 352.6 48.5V43.8ZM342.5 73.8C348.5 73.8 352.6 69.5 352.6 63.5C352.6 57.5 348.5 53.2 342.5 53.2C336.5 53.2 332.5 57.5 332.5 63.5C332.5 69.5 336.5 73.8 342.5 73.8Z" fill="url(#czZamGrad)"/>
-            <path d="M372.4 43.8H383.2V48.5C385.8 45.1 389.8 43 394.8 43C400.2 43 404.5 45.3 406.9 49.4C409.9 45.3 414.5 43 420.1 43C429.4 43 435.5 49.3 435.5 59.6V83.3H424.4V61.3C424.4 56.1 421.5 53.1 417.1 53.1C412.6 53.1 409.5 56.2 409.5 61.5V83.3H398.5V61.3C398.5 56.1 395.6 53.1 391.2 53.1C386.7 53.1 383.6 56.2 383.6 61.5V83.3H372.4V43.8Z" fill="url(#czZamGrad)"/>
-          </g>
-        </svg>
-      </a>
+      <div class="flex items-center gap-2 shrink-0">
+        <button id="openPlanBtn" type="button" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-400/30 text-xs font-mono flex items-center gap-1.5 cursor-pointer transition-colors">
+          <span class="text-amber-300">★</span>
+          <span id="headerPlanLabel" class="font-semibold text-amber-200 truncate max-w-[145px] sm:max-w-none">Free · 3/3 scans</span>
+        </button>
 
-      <div id="sessionPillBar" class="hidden items-center gap-1.5 overflow-x-auto max-w-[34%]"></div>
-
-      <button id="openPlanBtn" type="button" class="shrink-0 min-h-[36px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.08] border border-white/[0.08] text-xs font-mono text-slate-200 flex items-center gap-2 cursor-pointer transition-colors">
-        <span id="headerPlanBadge" class="text-[11px] font-semibold uppercase text-[#38F2FF]">FREE</span>
-        <span class="text-white/15">·</span>
-        <span id="headerQuotaText" class="text-[11px] text-slate-300">3/3</span>
-      </button>
+        <button id="headerCtaBtn" type="button" class="hidden sm:inline-flex items-center justify-center min-h-[38px] px-4 py-1.5 rounded-xl btn-primary-blue text-xs font-semibold text-white cursor-pointer transition-all">
+          ClipZam Pro
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="relative z-10 flex-1 w-full max-w-[680px] mx-auto px-4 sm:px-6 pt-7 sm:pt-11 pb-16">
-    <section class="text-center mb-6 sm:mb-7">
-      <h1 class="font-display font-extrabold text-2xl sm:text-4xl tracking-tight text-white leading-[1.15]">
-        Find any movie or show from a <span class="brand-gradient-text">clip</span>.
-      </h1>
-    </section>
-
-    <section class="bg-surface border border-white/[0.08] rounded-2xl p-4 sm:p-6 shadow-2xl">
-      <label class="drop drop-zone block border border-dashed border-white/[0.14] rounded-xl py-9 px-5 sm:py-12 sm:px-8 text-center cursor-pointer group" id="drop">
-        <div class="w-12 h-12 mx-auto mb-3.5 rounded-2xl bg-elevated border border-white/[0.08] flex items-center justify-center text-[#00E5FF] group-hover:scale-105 transition-transform">
-          <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
-          </svg>
-        </div>
-        <strong class="block font-display text-base sm:text-lg font-bold text-white mb-1">
-          Tap to choose a clip or drop it here
-        </strong>
-        <small class="block text-xs sm:text-sm text-slate-400">
-          Video or audio • Best results with clear speech, faces, or soundtrack
-        </small>
-        <input type="file" id="file" accept="video/*,audio/*" class="hidden">
-      </label>
-
-      <div id="previewStage" class="hidden space-y-4">
-        <div class="flex items-center justify-between gap-3">
-          <div class="min-w-0">
-            <p id="fileNameLabel" class="text-sm font-medium text-white truncate">clip.mp4</p>
-            <p class="text-xs font-mono text-slate-400 mt-0.5">
-              <span id="fileSizeLabel">0 MB</span> · <span id="fileDurationLabel" class="text-emerald-400">Ready</span>
-            </p>
-          </div>
-          <button id="clearClipBtn" type="button" class="shrink-0 min-h-[38px] px-3.5 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-200 transition-colors cursor-pointer">
-            Change clip
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobileDrawer" class="fixed inset-0 z-50 hidden md:hidden">
+    <div id="mobileDrawerBackdrop" class="fixed inset-0 bg-black/75 backdrop-blur-sm"></div>
+    <aside class="relative z-10 w-72 max-w-[82vw] h-full bg-surface border-r border-white/[0.08] p-5 flex flex-col justify-between">
+      <div class="space-y-5">
+        <div class="flex items-center justify-between">
+          <span class="font-display font-extrabold text-lg text-white">Clip<span class="text-gradient-cyan">Zam</span></span>
+          <button id="closeMobileDrawer" type="button" aria-label="Close menu" class="min-w-[34px] min-h-[34px] rounded-lg bg-elevated flex items-center justify-center text-slate-300 cursor-pointer">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
 
-        <div class="relative rounded-xl overflow-hidden bg-black border border-white/[0.08]">
-          <div id="scannerOverlay" class="hidden scanner-beam"></div>
-          <video id="preview" controls playsinline hidden class="w-full max-h-[300px] sm:max-h-[340px] block bg-black focus:outline-none"></video>
+        <div class="space-y-1">
+          <button type="button" data-nav="home" class="drawer-nav w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium bg-sky-500/15 text-sky-300 border border-sky-400/25 flex items-center gap-2.5 cursor-pointer">
+            <span>Home</span>
+          </button>
+          <button type="button" data-nav="pricing" class="drawer-nav w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/[0.05] flex items-center gap-2.5 cursor-pointer">
+            <span>Pricing</span>
+          </button>
         </div>
+      </div>
 
-        <div id="trimBox" class="hidden rounded-xl bg-elevated/90 border border-white/[0.08] p-3.5 sm:p-4 space-y-3">
-          <div class="flex items-center justify-between gap-2">
-            <span class="text-xs font-semibold text-white flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-[#00E5FF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
-              Select 15-second window to analyze
-            </span>
-            <span id="trimRangeLabel" class="font-mono text-xs text-[#38F2FF] font-semibold">0:00 – 0:15</span>
+      <div class="pt-4 border-t border-white/[0.08] space-y-3">
+        <div class="rounded-xl bg-elevated/90 border border-white/[0.07] p-3">
+          <div id="drawerPlanTitle" class="text-xs font-semibold text-white">Free</div>
+          <div id="drawerQuotaSub" class="text-[11px] font-mono text-slate-400 mt-0.5">3 scans daily</div>
+        </div>
+        <button id="drawerUpgradeBtn" type="button" class="w-full min-h-[42px] py-2.5 px-4 rounded-xl btn-primary-blue text-xs font-semibold text-white cursor-pointer">
+          ClipZam Pro · ₦2,500
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-9">
+
+    <!-- VIEW 1: HOME (Hero + Clip Scanner + Match Result) -->
+    <section id="view-home" class="space-y-8">
+      <div class="hero-glow rounded-3xl border border-white/[0.08] bg-surface/80 p-5 sm:p-8 lg:p-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-7 lg:gap-8 items-center">
+
+          <!-- Hero Copy -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-500/10 border border-sky-400/25 text-xs font-medium text-sky-300">
+              <span>AI Scene, Dialogue & Audio ID</span>
+            </div>
+
+            <h1 class="font-display font-extrabold text-3xl sm:text-4xl lg:text-[42px] tracking-tight text-white leading-[1.12]">
+              That scene you remember. <span class="text-gradient-cyan">Find it.</span>
+            </h1>
+
+            <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+              Upload a video or audio clip and let ClipZam identify the movie or TV show — with match confidence, episode details, trailers, and streaming options.
+            </p>
+
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-1">
+              <li class="flex items-center gap-2.5">
+                <span class="w-4 h-4 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-[11px] shrink-0">✓</span>
+                <span>Get match confidence & how we knew</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="w-4 h-4 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-[11px] shrink-0">✓</span>
+                <span>See season & episode details</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <span class="w-4 h-4 rounded-full bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-[11px] shrink-0">✓</span>
+                <span>Watch trailers & find where to stream</span>
+              </li>
+            </ul>
+
+            <div class="pt-2 flex flex-wrap items-center gap-3">
+              <button id="scrollToDropBtn" type="button" class="min-h-[44px] px-5 py-2.5 rounded-xl btn-primary-blue text-sm font-semibold text-white cursor-pointer transition-all">
+                Start Identifying →
+              </button>
+              <button id="jumpToPricingBtn" type="button" class="min-h-[44px] px-4 py-2.5 rounded-xl bg-elevated hover:bg-white/[0.08] border border-white/[0.08] text-sm font-medium text-slate-200 cursor-pointer transition-colors">
+                ClipZam Pro
+              </button>
+            </div>
           </div>
-          <input id="trimSlider" type="range" min="0" max="0" step="0.5" value="0" class="trim-slider">
-          <p class="text-[11px] text-slate-400 leading-relaxed">
-            Clip exceeds 15s. Slide to pick the clearest 15s moment—ClipZam will extract that exact segment in your browser before sending.
-          </p>
+
+          <!-- Clip Scanner Card -->
+          <div class="lg:col-span-7 bg-obsidian/80 border border-white/[0.09] rounded-2xl p-4 sm:p-6 shadow-2xl">
+            <label class="drop drop-zone block border-2 border-dashed border-sky-400/35 rounded-2xl py-8 px-4 sm:py-10 sm:px-6 text-center cursor-pointer group" id="drop">
+              <div class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-sky-500/15 border border-sky-400/25 flex items-center justify-center text-sky-400 group-hover:scale-105 transition-transform">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <strong class="block font-display text-base sm:text-lg font-bold text-white mb-1">
+                Drop your clip here
+              </strong>
+              <span class="block text-xs sm:text-sm text-slate-400 mb-3">
+                or tap to choose a file • Supports MP4, MOV, WebM, MP3 & more
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-elevated group-hover:bg-sky-500/20 border border-white/[0.1] text-xs font-semibold text-sky-300 transition-colors">
+                Choose File
+              </span>
+              <input type="file" id="file" accept="video/*,audio/*" class="hidden">
+            </label>
+
+            <!-- Clip Preview & 15s Trimmer -->
+            <div id="previewStage" class="hidden space-y-4">
+              <div class="flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                  <p id="fileNameLabel" class="text-sm font-semibold text-white truncate">clip.mp4</p>
+                  <p class="text-xs font-mono text-slate-400 mt-0.5">
+                    <span id="fileSizeLabel">0 MB</span> · <span id="fileDurationLabel" class="text-emerald-400">Ready</span>
+                  </p>
+                </div>
+                <button id="clearClipBtn" type="button" class="shrink-0 min-h-[36px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-200 cursor-pointer">
+                  Change clip
+                </button>
+              </div>
+
+              <div class="relative rounded-xl overflow-hidden bg-black border border-white/[0.08]">
+                <div id="scannerOverlay" class="hidden scanner-beam"></div>
+                <video id="preview" controls playsinline hidden class="w-full max-h-[280px] sm:max-h-[320px] block bg-black focus:outline-none"></video>
+              </div>
+
+              <div id="trimBox" class="hidden rounded-xl bg-elevated/90 border border-white/[0.08] p-3.5 space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-xs font-semibold text-white">Select 15-second window</span>
+                  <span id="trimRangeLabel" class="font-mono text-xs text-sky-300 font-semibold">0:00 – 0:15</span>
+                </div>
+                <input id="trimSlider" type="range" min="0" max="0" step="0.5" value="0" class="trim-slider">
+                <p class="text-[11px] text-slate-400">
+                  Clip is over 15s. Slide to pick the clearest 15s segment before identifying.
+                </p>
+              </div>
+            </div>
+
+            <!-- Optional Clues -->
+            <div class="mt-4 rounded-xl bg-elevated/80 border border-white/[0.08] p-3.5">
+              <label for="clueInput" class="flex items-center justify-between text-xs font-semibold text-white mb-2">
+                <span>Add Optional Clues</span>
+                <span class="text-[11px] font-mono font-normal text-slate-400">Dialogue · Actors · Scene</span>
+              </label>
+              <input
+                id="clueInput"
+                type="text"
+                maxlength="240"
+                placeholder="e.g. Dialogue, actors, scene description..."
+                class="w-full rounded-xl bg-obsidian/90 border border-white/[0.09] focus:border-sky-400 focus:outline-none px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500"
+              >
+            </div>
+
+            <div id="note" class="msg info hidden mt-4 rounded-xl text-xs sm:text-sm" hidden></div>
+
+            <!-- Scan Progress -->
+            <div id="progressBarBox" class="hidden mt-4 rounded-xl bg-elevated/80 border border-white/[0.08] p-3.5">
+              <div class="flex items-center justify-between text-xs mb-2">
+                <span id="progressStageText" class="font-medium text-slate-200 flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+                  Watching & listening to clip...
+                </span>
+                <span class="font-mono text-[11px] text-slate-400">10–35s</span>
+              </div>
+              <div class="h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden">
+                <div id="progressFill" class="h-full btn-primary-blue rounded-full transition-all duration-700" style="width: 20%"></div>
+              </div>
+            </div>
+
+            <button id="go" disabled class="mt-4 w-full min-h-[48px] py-3 px-5 rounded-xl font-display font-bold text-sm sm:text-base text-white btn-primary-blue active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span id="goLabel">Identify Clip</span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="mt-4 rounded-xl bg-elevated/90 border border-white/[0.08] p-3.5 sm:p-4">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <label for="clueInput" class="text-xs font-semibold text-white">
-            Optional clues
-          </label>
-          <span class="text-[11px] font-mono text-slate-400">Dialogue · Scene · Cast</span>
-        </div>
-        <textarea
-          id="clueInput"
-          rows="2"
-          maxlength="300"
-          placeholder="Add dialogue, scene details, or actors you remember..."
-          class="w-full rounded-lg bg-obsidian/80 border border-white/[0.08] focus:border-[#00D4FF] focus:outline-none px-3 py-2 text-xs sm:text-sm text-white placeholder-slate-500 resize-y min-h-[58px] transition-colors"
-        ></textarea>
-      </div>
-
-      <div id="note" class="msg info hidden mt-4 rounded-xl text-xs sm:text-sm" hidden></div>
-
-      <div id="progressBarBox" class="hidden mt-4 rounded-xl bg-elevated/80 border border-white/[0.08] p-3.5">
-        <div class="flex items-center justify-between text-xs mb-2">
-          <span id="progressStageText" class="font-medium text-slate-200 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>
-            Watching & listening to clip...
-          </span>
-          <span class="font-mono text-[11px] text-slate-400">10–35s</span>
-        </div>
-        <div class="h-1 w-full rounded-full bg-white/[0.07] overflow-hidden">
-          <div id="progressFill" class="h-full brand-gradient-bg rounded-full transition-all duration-700" style="width: 18%"></div>
-        </div>
-      </div>
-
-      <button id="go" disabled class="mt-4 w-full min-h-[50px] py-3.5 px-5 rounded-xl font-display font-bold text-sm sm:text-base text-white brand-gradient-bg active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-cyan-500/20">
-        <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <span id="goLabel">Identify Clip</span>
-      </button>
+      <!-- Result Output -->
+      <div id="out"></div>
     </section>
 
-    <div id="out" class="mt-7"></div>
+    <!-- VIEW 2: PRICING (Free Current Plan vs ClipZam Pro) -->
+    <section id="view-pricing" class="hidden space-y-6 animate-fade-up">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">
+            Unlock More Scans with <span class="text-gradient-cyan">ClipZam Pro</span>
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Get 150 scans daily for 30 days. Instant activation via Paystack.
+          </p>
+        </div>
+        <button type="button" data-nav="home" class="self-start sm:self-auto min-h-[38px] px-3.5 py-2 rounded-xl bg-surface hover:bg-elevated border border-white/[0.08] text-xs font-medium text-slate-200 cursor-pointer">
+          ← Back to Scanner
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Free Card -->
+        <div class="rounded-2xl bg-surface border border-white/[0.09] p-6 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Free</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">Starter</span>
+            </div>
+            <div>
+              <div class="font-display font-extrabold text-3xl text-white">3 <span class="text-sm font-normal text-slate-400">scans daily</span></div>
+              <p class="text-xs text-slate-400 mt-1">Basic clip identification</p>
+            </div>
+            <ul class="space-y-2.5 text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>3 clip identifications per day</span></li>
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Movie & TV episode matching</span></li>
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Trailers, streaming & similar titles</span></li>
+            </ul>
+          </div>
+          <button id="freePlanBtn" type="button" data-nav="home" class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-sm font-semibold text-slate-200 cursor-pointer transition-colors">
+            Current Plan
+          </button>
+        </div>
+
+        <!-- ClipZam Pro Card -->
+        <div class="rounded-2xl bg-surface border-2 border-sky-400/60 p-6 flex flex-col justify-between space-y-6 shadow-2xl shadow-sky-500/10">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">ClipZam Pro</span>
+              <span class="px-2.5 py-1 rounded-lg bg-sky-500/15 border border-sky-400/30 font-mono text-xs font-semibold text-sky-300">Most Popular</span>
+            </div>
+            <div>
+              <div class="font-display font-extrabold text-3xl text-white">₦2,500 <span class="text-sm font-normal text-slate-400">/ 30 days</span></div>
+              <p class="text-xs text-sky-300 mt-1">150 scans daily · Instant Paystack activation</p>
+            </div>
+            <ul class="space-y-2.5 text-sm text-slate-200 pt-2 border-t border-white/[0.08]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans per day</strong> for 30 days</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Email-linked quota synced across sessions</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Full episode, trailer & streaming details</span></li>
+            </ul>
+          </div>
+          <button id="pricingUpgradeBtn" type="button" class="w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-sm text-white cursor-pointer transition-all">
+            ClipZam Pro · ₦2,500
+          </button>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <!-- Clean Plan & Upgrade Modal -->
-  <div id="planModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-    <div class="w-full max-w-sm bg-surface border border-white/[0.1] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
+  <!-- Plan & Paystack Checkout Modal -->
+  <div id="planModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="w-full max-w-sm bg-surface border border-white/[0.12] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
       <div class="flex items-start justify-between gap-3 px-5 pt-5 pb-3">
         <div>
           <h2 class="font-display font-bold text-lg text-white leading-tight">ClipZam Pro</h2>
-          <p class="text-xs text-slate-400 mt-1">₦2,500 for 30 days · 150 scans/day</p>
+          <p class="text-xs text-slate-400 mt-1">Free: 3/day · ClipZam Pro: ₦2,500 / 30 days (150/day)</p>
         </div>
-        <button id="closePlanBtn" type="button" aria-label="Close" class="min-w-[34px] min-h-[34px] rounded-lg bg-white/[0.05] hover:bg-white/[0.1] flex items-center justify-center text-slate-400 hover:text-white cursor-pointer transition-colors">
+        <button id="closePlanBtn" type="button" aria-label="Close" class="min-w-[34px] min-h-[34px] rounded-lg bg-elevated hover:bg-white/[0.1] flex items-center justify-center text-slate-400 hover:text-white cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
 
       <div class="px-5 pb-5 space-y-4">
-        <div class="flex items-center justify-between text-xs py-2.5 px-3.5 rounded-xl bg-elevated/80 border border-white/[0.06]">
-          <span id="modalStatusSummary" class="text-slate-300 font-mono">FREE · 3/3 left today</span>
+        <div class="flex items-center justify-between text-xs py-2.5 px-3.5 rounded-xl bg-elevated border border-white/[0.07]">
+          <span id="modalStatusSummary" class="text-slate-200 font-mono">FREE · 3/3 left today</span>
           <span id="modalExpiryTag" class="font-mono text-emerald-400 hidden"></span>
         </div>
 
@@ -342,34 +448,30 @@
 
         <div>
           <label for="subEmailInput" class="block text-xs font-medium text-slate-300 mb-1.5">
-            Account email
+            Email for plan & receipt
           </label>
           <input
             id="subEmailInput"
             type="email"
             placeholder="you@example.com"
-            class="w-full rounded-xl bg-obsidian/90 border border-white/[0.1] focus:border-[#00D4FF] focus:outline-none px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition-colors"
+            class="w-full rounded-xl bg-obsidian border border-white/[0.12] focus:border-sky-400 focus:outline-none px-3.5 py-2.5 text-sm text-white placeholder-slate-500"
           >
         </div>
 
-        <button id="upgradePaystackBtn" type="button" class="w-full min-h-[46px] py-3 px-4 rounded-xl font-display font-bold text-sm text-white brand-gradient-bg cursor-pointer transition-all shadow-lg shadow-cyan-500/20">
+        <button id="upgradePaystackBtn" type="button" class="w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-sm text-white cursor-pointer transition-all">
           Continue to Paystack · ₦2,500
         </button>
-
-        <p class="text-[11px] text-center text-slate-500">
-          Free plan includes 3 scans/day. Pro is valid for 30 days.
-        </p>
       </div>
     </div>
   </div>
 
   <!-- Trailer Modal -->
   <div id="trailerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-    <div class="w-full max-w-2xl bg-surface border border-white/[0.1] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
+    <div class="w-full max-w-2xl bg-surface border border-white/[0.12] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
       <div class="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
         <span id="trailerTitle" class="text-sm font-display font-bold text-white truncate pr-4">Official Trailer</span>
-        <button id="closeTrailerBtn" type="button" class="min-w-[36px] min-h-[36px] rounded-lg bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center text-slate-300 hover:text-white cursor-pointer">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <button id="closeTrailerBtn" type="button" class="min-w-[36px] min-h-[36px] rounded-lg bg-elevated hover:bg-white/[0.12] flex items-center justify-center text-slate-300 hover:text-white cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <div class="aspect-video w-full bg-black">
@@ -377,8 +479,7 @@
       </div>
     </div>
   </div>
-
-<script>
+  <script>
 const CONFIG = {
   API_ENDPOINT: "/api/identify",
   STATUS_ENDPOINT: "/api/subscription/status",
@@ -401,7 +502,6 @@ let clip = null;
 let needsTrim = false;
 let trimStart = 0;
 let progressTimers = [];
-let sessionMatches = [];
 let currentRenderedMatch = null;
 let subState = {
   email: null,
@@ -423,6 +523,54 @@ const fmtTime = sec => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
 
+/* Navigation & Mobile Drawer */
+function setActiveView(viewName) {
+  ['home', 'pricing'].forEach(name => {
+    const el = $(`view-${name}`);
+    if (el) el.classList.toggle('hidden', name !== viewName);
+  });
+
+  document.querySelectorAll('.nav-link').forEach(btn => {
+    const active = btn.dataset.nav === viewName;
+    btn.className = active
+      ? 'nav-link px-3.5 py-2 rounded-xl text-white bg-white/[0.08] cursor-pointer transition-colors'
+      : 'nav-link px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.05] cursor-pointer transition-colors';
+  });
+
+  document.querySelectorAll('.drawer-nav').forEach(btn => {
+    const active = btn.dataset.nav === viewName;
+    btn.className = active
+      ? 'drawer-nav w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium bg-sky-500/15 text-sky-300 border border-sky-400/25 flex items-center gap-2.5 cursor-pointer'
+      : 'drawer-nav w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-white/[0.05] flex items-center gap-2.5 cursor-pointer';
+  });
+
+  closeMobileDrawer();
+}
+
+function openMobileDrawer() {
+  $('mobileDrawer').classList.remove('hidden');
+}
+function closeMobileDrawer() {
+  $('mobileDrawer').classList.add('hidden');
+}
+
+$('mobileMenuBtn').addEventListener('click', openMobileDrawer);
+$('closeMobileDrawer').addEventListener('click', closeMobileDrawer);
+$('mobileDrawerBackdrop').addEventListener('click', closeMobileDrawer);
+document.querySelectorAll('[data-nav]').forEach(el => {
+  el.addEventListener('click', () => setActiveView(el.dataset.nav));
+});
+$('brandHomeLink').addEventListener('click', e => {
+  e.preventDefault();
+  setActiveView('home');
+});
+$('scrollToDropBtn').addEventListener('click', () => {
+  setActiveView('home');
+  drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+$('jumpToPricingBtn').addEventListener('click', () => setActiveView('pricing'));
+
+/* Email & Subscription State */
 function getSavedEmail() {
   try {
     return (localStorage.getItem(CONFIG.EMAIL_STORAGE_KEY) || '').trim().toLowerCase();
@@ -444,11 +592,24 @@ function updateSubscriptionUI() {
   const limit = Math.max(1, Number(usageState.limit ?? subState.dailyLimit ?? 3));
   const price = Number(subState.proMonthlyNgn || 2500);
 
-  $('headerPlanBadge').textContent = isPro ? 'PRO' : 'FREE';
-  $('headerPlanBadge').className = isPro
-    ? 'text-[11px] font-semibold uppercase text-emerald-400'
-    : 'text-[11px] font-semibold uppercase text-[#38F2FF]';
-  $('headerQuotaText').textContent = `${remaining}/${limit}`;
+  $('headerPlanLabel').textContent = isPro
+    ? `ClipZam Pro · ${remaining}/${limit}`
+    : `Free · ${remaining}/${limit} scans`;
+
+  $('headerCtaBtn').textContent = isPro
+    ? `ClipZam Pro (${subState.daysRemaining || 30}d)`
+    : 'ClipZam Pro';
+
+  $('freePlanBtn').textContent = isPro ? 'Switch to Scanner' : 'Current Plan';
+  $('pricingUpgradeBtn').textContent = isPro
+    ? `Extend ClipZam Pro · ₦${price.toLocaleString()}`
+    : `ClipZam Pro · ₦${price.toLocaleString()}`;
+
+  $('drawerPlanTitle').textContent = isPro ? 'ClipZam Pro (Active)' : 'Free';
+  $('drawerQuotaSub').textContent = `${remaining} of ${limit} scans left today`;
+  $('drawerUpgradeBtn').textContent = isPro
+    ? `Extend ClipZam Pro · ₦${price.toLocaleString()}`
+    : `ClipZam Pro · ₦${price.toLocaleString()}`;
 
   $('modalStatusSummary').textContent = `${isPro ? 'PRO' : 'FREE'} · ${remaining}/${limit} scans left today`;
 
@@ -547,7 +708,7 @@ async function handlePaystackReturnIfNeeded() {
     const activatedEmail = data.subscription?.email || email;
     if (activatedEmail) setSavedEmail(activatedEmail);
     await refreshSubscriptionStatus(activatedEmail);
-    setModalAlert('Pro active for 30 days (150 scans/day).', 'ok');
+    setModalAlert('ClipZam Pro active for 30 days (150 scans/day).', 'ok');
   } catch (err) {
     setModalAlert(err?.message || 'Could not verify payment.', 'err');
   }
@@ -556,7 +717,7 @@ async function handlePaystackReturnIfNeeded() {
 async function startPaystackCheckout() {
   const inputEmail = ($('subEmailInput').value || getSavedEmail() || '').trim().toLowerCase();
   if (!inputEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputEmail)) {
-    setModalAlert('Enter a valid email address.', 'err');
+    openPlanModal('Enter a valid email address to continue to Paystack.', 'err');
     $('subEmailInput').focus();
     return;
   }
@@ -584,7 +745,7 @@ async function startPaystackCheckout() {
       throw new Error(
         data?.error ||
           data?.message ||
-          `Paystack init failed (${res.status}). Verify PAYSTACK_SECRET_KEY in Cloudflare.`
+          `Paystack init failed (${res.status}). Check PAYSTACK_SECRET_KEY in Cloudflare.`
       );
     }
     window.location.href = data.authorization_url;
@@ -596,6 +757,9 @@ async function startPaystackCheckout() {
 }
 
 $('openPlanBtn').addEventListener('click', () => openPlanModal());
+$('headerCtaBtn').addEventListener('click', () => openPlanModal());
+$('drawerUpgradeBtn').addEventListener('click', () => { closeMobileDrawer(); openPlanModal(); });
+$('pricingUpgradeBtn').addEventListener('click', () => openPlanModal());
 $('closePlanBtn').addEventListener('click', closePlanModal);
 $('planModal').addEventListener('click', e => { if (e.target === $('planModal')) closePlanModal(); });
 $('subEmailInput').addEventListener('change', () => {
@@ -607,6 +771,7 @@ $('subEmailInput').addEventListener('change', () => {
 });
 $('upgradePaystackBtn').addEventListener('click', startPaystackCheckout);
 
+/* Clip Selection, Trimming & Identification */
 function show(el, text, cls) {
   el.hidden = false;
   el.classList.remove('hidden');
@@ -615,7 +780,7 @@ function show(el, text, cls) {
     el.innerHTML = `<svg class="w-4 h-4 text-rose-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${esc(text)}</span>`;
   } else {
     el.className = 'msg info mt-4 p-3.5 rounded-xl bg-elevated border border-white/[0.08] text-slate-300 flex items-start gap-2.5';
-    el.innerHTML = `<svg class="w-4 h-4 text-[#00E5FF] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${esc(text)}</span>`;
+    el.innerHTML = `<svg class="w-4 h-4 text-sky-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${esc(text)}</span>`;
   }
 }
 function hideNote() {
@@ -635,21 +800,17 @@ function resetWorkspace() {
   previewStage.classList.add('hidden');
   trimBox.classList.add('hidden');
   drop.classList.remove('hidden');
-  out.innerHTML = '';
   go.disabled = true;
   goLabel.textContent = 'Identify Clip';
   hideNote();
 }
 $('clearClipBtn').addEventListener('click', resetWorkspace);
-$('brandReset').addEventListener('click', e => { e.preventDefault(); resetWorkspace(); });
 
 function updateTrimPreview() {
   trimStart = parseFloat(trimSlider.value) || 0;
   const end = Math.min(preview.duration || trimStart + CONFIG.MAX_SECONDS, trimStart + CONFIG.MAX_SECONDS);
   trimRangeLabel.textContent = `${fmtTime(trimStart)} – ${fmtTime(end)}`;
-  if (isFinite(preview.duration)) {
-    preview.currentTime = trimStart;
-  }
+  if (isFinite(preview.duration)) preview.currentTime = trimStart;
 }
 trimSlider.addEventListener('input', updateTrimPreview);
 
@@ -663,7 +824,7 @@ function pick(file) {
   if (!file) return;
 
   if (file.size > CONFIG.MAX_RAW_MB * 1024 * 1024) {
-    return show(note, `File is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Please choose a file under ${CONFIG.MAX_RAW_MB} MB.`, 'err');
+    return show(note, `File is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Choose a file under ${CONFIG.MAX_RAW_MB} MB.`, 'err');
   }
 
   drop.classList.add('hidden');
@@ -695,7 +856,7 @@ function pick(file) {
       } else {
         fileDurationLabel.textContent = `${Math.round(dur)}s (max ${CONFIG.MAX_SECONDS}s)`;
         fileDurationLabel.className = 'text-rose-400';
-        show(note, `This audio clip is ${Math.round(dur)}s long. The maximum is ${CONFIG.MAX_SECONDS}s. Please trim it first.`, 'err');
+        show(note, `This audio clip is ${Math.round(dur)}s long. Max is ${CONFIG.MAX_SECONDS}s.`, 'err');
         return;
       }
     }
@@ -731,14 +892,14 @@ drop.addEventListener('drop', e => pick(e.dataTransfer.files[0]));
 async function extract15sSegment(videoEl, startSec) {
   return new Promise((resolve, reject) => {
     const stream = videoEl.captureStream ? videoEl.captureStream() : (videoEl.mozCaptureStream ? videoEl.mozCaptureStream() : null);
-    if (!stream) return reject(new Error('Your browser does not support automatic trimming. Please trim the video to 15s first.'));
+    if (!stream) return reject(new Error('Browser does not support automatic trimming. Trim to 15s first.'));
 
     const mimeType = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'].find(m => MediaRecorder.isTypeSupported(m)) || '';
     const recorder = new MediaRecorder(stream, mimeType ? { mimeType, videoBitsPerSecond: 1400000 } : undefined);
     const chunks = [];
 
     recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
-    recorder.onerror = () => reject(new Error('Could not extract the 15-second clip segment.'));
+    recorder.onerror = () => reject(new Error('Could not extract 15s segment.'));
     recorder.onstop = () => {
       videoEl.pause();
       resolve(new Blob(chunks, { type: recorder.mimeType || 'video/webm' }));
@@ -751,13 +912,8 @@ async function extract15sSegment(videoEl, startSec) {
     videoEl.onseeked = () => {
       videoEl.onseeked = null;
       recorder.start(250);
-      videoEl.play().catch(() => {
-        videoEl.muted = true;
-        videoEl.play();
-      });
-      setTimeout(() => {
-        if (recorder.state !== 'inactive') recorder.stop();
-      }, durationMs);
+      videoEl.play().catch(() => { videoEl.muted = true; videoEl.play(); });
+      setTimeout(() => { if (recorder.state !== 'inactive') recorder.stop(); }, durationMs);
     };
   });
 }
@@ -771,7 +927,7 @@ function toBase64(blob) {
       const b64 = idx !== -1 ? raw.slice(idx + 8) : (raw.split(',')[1] || '');
       res(b64.replace(/[^A-Za-z0-9+/=]/g, ''));
     };
-    r.onerror = () => rej(new Error('Could not read the file.'));
+    r.onerror = () => rej(new Error('Could not read file.'));
     r.readAsDataURL(blob);
   });
 }
@@ -779,17 +935,17 @@ function toBase64(blob) {
 function startProgress(isTrimming) {
   scannerOverlay.classList.remove('hidden');
   progressBarBox.classList.remove('hidden');
-  progressFill.style.width = isTrimming ? '12%' : '22%';
-  progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>${isTrimming ? 'Extracting selected 15s segment...' : 'Watching & listening to clip...'}`;
+  progressFill.style.width = isTrimming ? '14%' : '24%';
+  progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>${isTrimming ? 'Extracting selected 15s window...' : 'Watching & listening to clip...'}`;
 
   progressTimers.push(setTimeout(() => {
-    progressFill.style.width = '58%';
-    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>Analyzing dialogue, cast & cinematography...`;
+    progressFill.style.width = '60%';
+    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>Analyzing dialogue, cast & cinematography...`;
   }, isTrimming ? 15500 : 2500));
 
   progressTimers.push(setTimeout(() => {
-    progressFill.style.width = '84%';
-    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping"></span>Verifying match & loading TMDB details...`;
+    progressFill.style.width = '86%';
+    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>Verifying match & loading TMDB details...`;
   }, isTrimming ? 22000 : 9000));
 }
 
@@ -812,12 +968,7 @@ async function identifyOnServer(mediaBlob) {
   const res = await fetch(CONFIG.API_ENDPOINT, {
     method: 'POST',
     headers,
-    body: JSON.stringify({
-      mediaBase64,
-      mimeType: cleanMime,
-      clue,
-      email: email || undefined
-    })
+    body: JSON.stringify({ mediaBase64, mimeType: cleanMime, clue, email: email || undefined })
   });
 
   const data = await res.json().catch(() => ({}));
@@ -832,15 +983,12 @@ async function identifyOnServer(mediaBlob) {
     throw err;
   }
 
-  if (!res.ok) {
-    throw new Error(data.error || 'Could not identify this clip.');
-  }
+  if (!res.ok) throw new Error(data.error || 'Could not identify this clip.');
   return data;
 }
 
 go.addEventListener('click', async () => {
   if (!clip) return;
-
   go.disabled = true;
   goLabel.textContent = 'Analyzing...';
   out.innerHTML = '';
@@ -852,53 +1000,24 @@ go.addEventListener('click', async () => {
     if (needsTrim) {
       payloadBlob = await extract15sSegment(preview, trimStart);
       if (payloadBlob.size > CONFIG.MAX_MB * 1024 * 1024) {
-        throw new Error('Trimmed segment is still over 10 MB. Try a lower-resolution video.');
+        throw new Error('Trimmed clip is still over 10 MB. Try a lower-resolution video.');
       }
     }
-
     const d = await identifyOnServer(payloadBlob);
     stopProgress();
-
-    if (d.identified) {
-      addSessionMatch(d);
-    }
     render(d);
     out.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch (e) {
     stopProgress();
     show(note, e.message || 'Something went wrong.', 'err');
-    if (e.isDailyLimit) {
-      openPlanModal(e.message, e.isProLimit ? 'info' : 'err');
-    }
+    if (e.isDailyLimit) openPlanModal(e.message, e.isProLimit ? 'info' : 'err');
   } finally {
     go.disabled = false;
     goLabel.textContent = 'Identify Clip';
   }
 });
 
-function addSessionMatch(d) {
-  if (sessionMatches.length && sessionMatches[0].title === d.title && sessionMatches[0].episode === d.episode) return;
-  sessionMatches.unshift(d);
-  if (sessionMatches.length > 3) sessionMatches.pop();
-  renderSessionPills();
-}
-
-function renderSessionPills() {
-  const bar = $('sessionPillBar');
-  if (sessionMatches.length <= 1) {
-    bar.classList.add('hidden');
-    bar.classList.remove('flex');
-    return;
-  }
-  bar.classList.remove('hidden');
-  bar.classList.add('flex');
-  bar.innerHTML = sessionMatches.map((m, idx) => `
-    <button type="button" onclick="render(sessionMatches[${idx}])" class="shrink-0 px-2.5 py-1 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-[11px] text-slate-300 truncate max-w-[130px] cursor-pointer transition-colors">
-      ${esc(m.title)}
-    </button>
-  `).join('');
-}
-
+/* Trailer & Share */
 function openTrailer(key, title) {
   $('trailerTitle').textContent = `${title} — Trailer`;
   $('trailerFrame').src = `https://www.youtube.com/embed/${encodeURIComponent(key)}?autoplay=1&rel=0`;
@@ -913,7 +1032,8 @@ function closeTrailer() {
 $('closeTrailerBtn').addEventListener('click', closeTrailer);
 $('trailerModal').addEventListener('click', e => { if (e.target === $('trailerModal')) closeTrailer(); });
 
-async function shareMatch() {  const d = currentRenderedMatch;
+async function shareMatch() {
+  const d = currentRenderedMatch;
   if (!d) return;
   const seText = d.season && d.episode ? ` (S${d.season} E${d.episode})` : '';
   const pct = Math.round((d.confidence || 0) * 100);
@@ -921,18 +1041,14 @@ async function shareMatch() {  const d = currentRenderedMatch;
   const url = d.tmdb_url || window.location.href;
 
   if (navigator.share) {
-    try {
-      await navigator.share({ title: d.title, text, url });
-      return;
-    } catch (e) {}
+    try { await navigator.share({ title: d.title, text, url }); return; } catch (_) {}
   }
   const ta = document.createElement('textarea');
-  ta.value = `${text} ${d.tmdb_url ? d.tmdb_url : ''}`.trim();
+  ta.value = `${text} ${d.tmdb_url || ''}`.trim();
   document.body.appendChild(ta);
   ta.select();
   document.execCommand('copy');
   document.body.removeChild(ta);
-
   const btn = $('shareBtn');
   if (btn) {
     const orig = btn.innerHTML;
@@ -941,6 +1057,7 @@ async function shareMatch() {  const d = currentRenderedMatch;
   }
 }
 
+/* Match Result Render */
 function render(d) {
   currentRenderedMatch = d;
 
@@ -949,7 +1066,7 @@ function render(d) {
       <div class="animate-fade-up bg-surface border border-white/[0.08] rounded-2xl p-6 text-center">
         <p class="font-display font-bold text-base text-white mb-1">Could not identify this clip</p>
         <p class="text-xs sm:text-sm text-slate-400 max-w-sm mx-auto">
-          Try a segment with clearer spoken dialogue, recognizable faces, or distinctive background music.
+          Try a clip with clearer dialogue, faces, or soundtrack, or add scene/actor clues.
         </p>
       </div>`;
     return;
@@ -957,18 +1074,18 @@ function render(d) {
 
   const pct = Math.round((d.confidence || 0) * 100);
   const seBadge = d.season && d.episode
-    ? `<span class="px-2 py-0.5 rounded-md bg-cyan-500/15 border border-cyan-400/30 text-[#38F2FF] font-mono text-xs font-semibold">S${esc(d.season)} · E${esc(d.episode)}</span>`
+    ? `<span class="px-2 py-0.5 rounded-md bg-sky-500/15 border border-sky-400/30 text-sky-300 font-mono text-xs font-semibold">S${esc(d.season)} · E${esc(d.episode)}</span>`
     : '';
 
   const poster = d.poster
-    ? `<img src="${esc(d.poster)}" alt="${esc(d.title)}" class="w-24 sm:w-32 aspect-[2/3] object-cover rounded-xl border border-white/10 shadow-xl shrink-0 bg-elevated">`
-    : `<div class="w-24 sm:w-32 aspect-[2/3] rounded-xl border border-white/10 bg-elevated flex items-center justify-center text-[11px] font-mono text-slate-500 shrink-0 text-center p-2">No Poster</div>`;
+    ? `<img src="${esc(d.poster)}" alt="${esc(d.title)}" class="w-28 sm:w-40 aspect-[2/3] object-cover rounded-xl border border-white/10 shadow-xl shrink-0 bg-elevated">`
+    : `<div class="w-28 sm:w-40 aspect-[2/3] rounded-xl border border-white/10 bg-elevated flex items-center justify-center text-xs font-mono text-slate-500 shrink-0">No Poster</div>`;
 
   const providersHtml = (d.providers && d.providers.length)
     ? `<div class="flex flex-wrap items-center gap-2 pt-1">
-         <span class="text-[11px] font-mono uppercase tracking-wider text-slate-500">Stream:</span>
+         <span class="text-xs font-medium text-slate-400">Available on:</span>
          ${d.providers.map(p => `
-           <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-elevated border border-white/[0.08] text-xs text-slate-200">
+           <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-elevated border border-white/[0.08] text-xs text-slate-200">
              ${p.logo ? `<img src="${esc(p.logo)}" alt="" class="w-4 h-4 rounded">` : ''}
              <span>${esc(p.name)}</span>
            </span>
@@ -984,13 +1101,13 @@ function render(d) {
 
   const dialogueHtml = (d.dialogue && d.dialogue.length)
     ? `<div class="mt-3 pt-3 border-t border-white/[0.06] space-y-1">
-         ${d.dialogue.map(line => `<p class="text-xs italic text-slate-300 pl-2.5 border-l-2 border-[#00E5FF]/60">“${esc(line)}”</p>`).join('')}
+         ${d.dialogue.map(line => `<p class="text-xs italic text-slate-300 pl-2.5 border-l-2 border-sky-400/70">“${esc(line)}”</p>`).join('')}
        </div>`
     : '';
 
   const sim = (d.similar || []).map(s => `
     <div class="flex-none w-24 sm:w-28">
-      <div class="aspect-[2/3] w-full rounded-xl overflow-hidden bg-elevated border border-white/[0.07] mb-1.5">
+      <div class="aspect-[2/3] w-full rounded-xl overflow-hidden bg-elevated border border-white/[0.08] mb-1.5">
         ${s.poster
           ? `<img src="${esc(s.poster)}" alt="${esc(s.title)}" class="w-full h-full object-cover">`
           : `<div class="w-full h-full flex items-center justify-center p-2 text-center text-[11px] text-slate-500">${esc(s.title)}</div>`}
@@ -1001,12 +1118,12 @@ function render(d) {
   `).join('');
 
   out.innerHTML = `
-    <article class="result animate-fade-up bg-surface border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl">
-      <div class="p-4 sm:p-6 flex gap-4 sm:gap-5 items-start border-b border-white/[0.06]">
+    <article class="animate-fade-up bg-surface border border-white/[0.09] rounded-2xl overflow-hidden shadow-2xl">
+      <div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-5 items-start border-b border-white/[0.07]">
         ${poster}
-        <div class="flex-1 min-w-0">
-          <div class="flex flex-wrap items-center gap-1.5 mb-1.5">
-            <span class="px-2 py-0.5 rounded-md bg-white/[0.07] font-mono text-[11px] font-semibold uppercase text-slate-300">
+        <div class="flex-1 min-w-0 w-full">
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="px-2.5 py-0.5 rounded-md bg-white/[0.07] font-mono text-[11px] font-semibold uppercase text-slate-300">
               ${d.type === 'tv' ? 'TV Series' : 'Movie'}
             </span>
             ${d.year ? `<span class="font-mono text-xs text-slate-400">${esc(d.year)}</span>` : ''}
@@ -1014,34 +1131,36 @@ function render(d) {
             ${seBadge}
           </div>
 
-          <h2 class="font-display font-extrabold text-xl sm:text-2xl text-white leading-tight break-words">
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white leading-tight break-words">
             ${esc(d.title)}
           </h2>
 
-          ${d.scene_context ? `<p class="text-xs text-[#38F2FF] font-medium mt-1">${esc(d.scene_context)}</p>` : ''}
+          ${d.scene_context ? `<p class="text-xs sm:text-sm text-sky-300 font-medium mt-1">${esc(d.scene_context)}</p>` : ''}
 
-          <div class="mt-3 max-w-[220px]">
-            <div class="flex justify-between text-[11px] font-mono mb-1">
-              <span class="text-slate-400">Match</span>
-              <span class="font-semibold ${pct >= 80 ? 'text-emerald-400' : 'text-[#38F2FF]'}">${pct}%</span>
+          <div class="mt-3.5 max-w-xs">
+            <div class="flex justify-between text-xs font-mono mb-1">
+              <span class="text-slate-400">Match Confidence</span>
+              <span class="font-bold ${pct >= 80 ? 'text-emerald-400' : 'text-sky-300'}">${pct}%</span>
             </div>
-            <div class="h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden">
-              <div class="h-full rounded-full ${pct >= 80 ? 'bg-emerald-400' : 'brand-gradient-bg'}" style="width:${pct}%"></div>
+            <div class="h-2 w-full rounded-full bg-white/[0.08] overflow-hidden">
+              <div class="h-full rounded-full ${pct >= 80 ? 'bg-emerald-400' : 'btn-primary-blue'}" style="width:${pct}%"></div>
             </div>
           </div>
 
-          <div class="mt-4 flex flex-wrap items-center gap-2">
+          ${providersHtml}
+
+          <div class="mt-4 flex flex-wrap items-center gap-2.5">
             ${d.trailer_key ? `
-              <button type="button" onclick="openTrailer('${esc(d.trailer_key)}', '${esc(d.title).replace(/'/g, "\'")}')" class="min-h-[38px] px-3 py-1.5 rounded-xl brand-gradient-bg text-xs font-semibold text-white inline-flex items-center gap-1.5 cursor-pointer transition-all">
+              <button type="button" onclick="openTrailer('${esc(d.trailer_key)}', '${esc(d.title).replace(/'/g, "\'")}')" class="min-h-[40px] px-4 py-2 rounded-xl btn-primary-blue text-xs font-semibold text-white inline-flex items-center gap-1.5 cursor-pointer">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                <span>Trailer</span>
+                <span>Watch Trailer</span>
               </button>` : ''}
             ${d.tmdb_url ? `
-              <a href="${esc(d.tmdb_url)}" target="_blank" rel="noopener" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-200 inline-flex items-center gap-1 transition-colors">
+              <a href="${esc(d.tmdb_url)}" target="_blank" rel="noopener" class="min-h-[40px] px-3.5 py-2 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-xs font-medium text-slate-200 inline-flex items-center gap-1.5">
                 <span>TMDB</span>
                 <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
               </a>` : ''}
-            <button id="shareBtn" type="button" onclick="shareMatch()" class="min-h-[38px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.08] text-xs font-medium text-slate-200 inline-flex items-center gap-1.5 cursor-pointer transition-colors">
+            <button id="shareBtn" type="button" onclick="shareMatch()" class="min-h-[40px] px-3.5 py-2 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-xs font-medium text-slate-200 inline-flex items-center gap-1.5 cursor-pointer">
               <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
               <span>Share</span>
             </button>
@@ -1050,10 +1169,8 @@ function render(d) {
       </div>
 
       <div class="p-4 sm:p-6 space-y-5 text-sm">
-        ${providersHtml}
-
         ${(d.evidence || dialogueHtml || charactersHtml) ? `
-          <div class="rounded-xl bg-elevated/80 border border-white/[0.07] p-3.5 sm:p-4">
+          <div class="rounded-xl bg-elevated/85 border border-white/[0.08] p-4">
             <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">How we knew</div>
             ${d.evidence ? `<p class="text-xs sm:text-sm text-slate-200 leading-relaxed">${esc(d.evidence)}</p>` : ''}
             ${charactersHtml}
@@ -1086,7 +1203,7 @@ function render(d) {
     </article>`;
 }
 
-(async function initSubscriptionFlow() {
+(async function initApp() {
   updateSubscriptionUI();
   await refreshSubscriptionStatus();
   await handlePaystackReturnIfNeeded();
