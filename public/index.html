@@ -170,7 +170,7 @@
   <!-- Top Navigation Header -->
   <header class="sticky top-0 z-30 border-b border-white/[0.08] bg-obsidian/88 backdrop-blur-xl">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
-      <!-- Custom ClipZam Logo (1000038532_2.png) -->
+      <!-- Custom ClipZam Logo -->
       <a href="#home" id="brandHomeLink" class="inline-flex items-center shrink-0 focus:outline-none py-1">
         <svg class="h-8 sm:h-9 w-auto shrink-0" viewBox="0 0 366 92" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClipZam">
           <defs>
@@ -185,19 +185,14 @@
               <stop offset="100%" stop-color="#7C3AED"/>
             </linearGradient>
           </defs>
-          <!-- Camera Viewfinder Corner Brackets -->
           <path d="M10 25V15C10 12.2386 12.2386 10 15 10H25" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
           <path d="M67 10H77C79.7614 10 82 12.2386 82 15V25" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
           <path d="M10 67V77C10 79.7614 12.2386 82 15 82H25" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
           <path d="M67 82H77C79.7614 82 82 79.7614 82 77V67" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
-          <!-- Concentric Broken Aperture Rings -->
           <circle cx="46" cy="46" r="29.5" stroke="url(#czRingGrad)" stroke-width="3.6" stroke-dasharray="132 14 6 22" stroke-linecap="round"/>
           <circle cx="46" cy="46" r="21.5" stroke="url(#czRingGrad)" stroke-width="3.2" stroke-dasharray="92 14 5 18" stroke-dashoffset="24" stroke-linecap="round"/>
-          <!-- Center Play Triangle -->
           <path d="M39.5 34.2C39.5 32.78 41.08 31.92 42.28 32.68L58.4 42.98C59.52 43.69 59.52 45.31 58.4 46.02L42.28 56.32C41.08 57.08 39.5 56.22 39.5 54.8V34.2Z" fill="url(#czRingGrad)"/>
-          <!-- "Clip" Crisp White Typography -->
           <text x="98" y="64" fill="#FFFFFF" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="800" font-size="50" letter-spacing="-1.6">Clip</text>
-          <!-- "Zam" Cyan-to-Purple Geometric Typography -->
           <text x="198" y="64" fill="url(#czZamGrad)" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="800" font-size="50" letter-spacing="-1">Zam</text>
         </svg>
       </a>
@@ -233,7 +228,6 @@
 
     <!-- VIEW 1: HOME (Hero + Cinema Viewfinder Clip Uploader & 15s Analyzer) -->
     <section id="view-home" class="space-y-6">
-      <!-- Hero Headline -->
       <div class="text-center space-y-2 pt-1">
         <h1 class="font-display font-extrabold text-[34px] sm:text-5xl tracking-tight text-white leading-[1.08]">
           Find it. <span class="text-gradient-watch">Watch it.</span>
@@ -243,9 +237,7 @@
         </p>
       </div>
 
-      <!-- Cinema Viewfinder Upload & 15s Playback Card -->
       <div class="glass-card rounded-3xl p-4 sm:p-6 max-w-xl mx-auto w-full relative overflow-hidden">
-        <!-- Viewfinder Corner Accents -->
         <div class="pointer-events-none absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-sky-400/45 rounded-tl-md"></div>
         <div class="pointer-events-none absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-sky-400/45 rounded-tr-md"></div>
         <div class="pointer-events-none absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-purple-400/45 rounded-bl-md"></div>
@@ -254,7 +246,6 @@
         <!-- Idle State: Cinema Viewfinder Upload Trigger -->
         <label id="drop" class="drop cinema-drop-zone block rounded-2xl py-9 px-5 sm:py-11 sm:px-7 text-center cursor-pointer group">
           <div class="cinema-emblem-orb w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-            <!-- Cinema Clapperboard & Film-Frame Play Icon -->
             <svg class="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-[0_4px_12px_rgba(5,8,20,0.4)]" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g transform="rotate(-11 16 26)">
                 <rect x="15" y="15" width="50" height="11" rx="3" fill="#FFFFFF"/>
@@ -282,7 +273,7 @@
           <input type="file" id="file" accept="video/*,audio/*" class="hidden">
         </label>
 
-        <!-- Active / Playback State: Cinema Frame Player + 15s Window Slider -->
+        <!-- Active / Playback State -->
         <div id="previewStage" class="hidden space-y-4">
           <div class="flex items-center justify-between gap-3">
             <div class="min-w-0">
@@ -383,62 +374,149 @@
       <div id="historyList" class="space-y-3"></div>
     </section>
 
-    <!-- VIEW 3: PRICING (Free vs ClipZam Pro) -->
+    <!-- VIEW 3: PRICING (Country/Currency Selector + USD Base Tiers + Paystack Checkout) -->
     <section id="view-pricing" class="hidden space-y-6 animate-fade-up">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
           <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">
             Unlock More Scans with <span class="text-gradient-watch">ClipZam Pro</span>
           </h2>
           <p class="text-sm text-slate-400 mt-1">
-            Get 150 scans daily for 30 days. Instant activation via Paystack.
+            All-inclusive pricing in USD with live local currency conversion.
           </p>
         </div>
-        <button type="button" data-nav="home" class="self-start sm:self-auto min-h-[38px] px-3.5 py-2 rounded-xl bg-surface hover:bg-elevated border border-white/[0.08] text-xs font-medium text-slate-200 cursor-pointer">
-          ← Back to Scanner
-        </button>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Country / Currency Selector -->
+          <div class="flex items-center gap-2 bg-surface border border-sky-400/30 rounded-xl px-3 py-1.5">
+            <label for="pricingCountrySelect" class="text-xs text-slate-400 shrink-0">Country:</label>
+            <select id="pricingCountrySelect" class="country-selector bg-transparent text-xs sm:text-sm font-semibold text-white focus:outline-none cursor-pointer">
+              <option value="NG" class="bg-obsidian text-white">🇳🇬 Nigeria (NGN)</option>
+              <option value="US" class="bg-obsidian text-white">🇺🇸 United States (USD)</option>
+              <option value="GB" class="bg-obsidian text-white">🇬🇧 United Kingdom (GBP)</option>
+              <option value="GH" class="bg-obsidian text-white">🇬🇭 Ghana (GHS)</option>
+              <option value="KE" class="bg-obsidian text-white">🇰🇪 Kenya (KES)</option>
+              <option value="ZA" class="bg-obsidian text-white">🇿🇦 South Africa (ZAR)</option>
+              <option value="CA" class="bg-obsidian text-white">🇨🇦 Canada (CAD)</option>
+              <option value="EU" class="bg-obsidian text-white">🇪🇺 Europe (EUR)</option>
+            </select>
+          </div>
+
+          <button type="button" data-nav="home" class="min-h-[38px] px-3.5 py-2 rounded-xl bg-surface hover:bg-elevated border border-white/[0.08] text-xs font-medium text-slate-200 cursor-pointer">
+            ← Scanner
+          </button>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <div class="glass-card rounded-2xl p-6 flex flex-col justify-between space-y-6">
-          <div class="space-y-4">
+      <!-- Live FX Rate & Payment Method Banner -->
+      <div class="rounded-2xl bg-elevated/70 border border-white/[0.08] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span id="fxRateBannerText">Live rate: $1 USD ≈ ₦1,550 NGN</span>
+        </div>
+        <span id="paymentChannelBannerText" class="font-mono text-[11px] text-sky-300">
+          Paystack Nigeria · Bank Transfer, USSD & Cards
+        </span>
+      </div>
+
+      <!-- 4-Tier Grid: Free + Day Pass ($1.50) + Weekly Pro ($2.50) + Monthly Pro ($3.50) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Tier 0: Free -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="font-display font-bold text-lg text-white">Free</span>
-              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">Starter</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">No Sign-Up</span>
             </div>
             <div>
-              <div class="font-display font-extrabold text-3xl text-white">3 <span class="text-sm font-normal text-slate-400">scans daily</span></div>
-              <p class="text-xs text-slate-400 mt-1">Basic clip identification</p>
+              <div class="font-display font-extrabold text-3xl text-white">$0 <span class="text-sm font-normal text-slate-400">/ forever</span></div>
+              <p class="text-xs text-slate-400 mt-1">3 scans daily · Resets every midnight</p>
             </div>
-            <ul class="space-y-2.5 text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
               <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>3 clip identifications per day</span></li>
               <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Movie & TV episode matching</span></li>
-              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Trailers, streaming & similar titles</span></li>
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Trailers & streaming platforms</span></li>
             </ul>
           </div>
-          <button id="freePlanBtn" type="button" data-nav="home" class="w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-sm font-semibold text-slate-200 cursor-pointer transition-colors">
+          <button id="freePlanBtn" type="button" data-nav="home" class="w-full min-h-[42px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-xs sm:text-sm font-semibold text-slate-200 cursor-pointer transition-colors">
             Current Plan
           </button>
         </div>
 
-        <div class="glass-card rounded-2xl border-2 border-sky-400/60 p-6 flex flex-col justify-between space-y-6 shadow-2xl shadow-sky-500/10">
-          <div class="space-y-4">
+        <!-- Tier 1: Day Pass ($1.50 One-Time) -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="font-display font-bold text-lg text-white">ClipZam Pro</span>
-              <span class="px-2.5 py-1 rounded-lg bg-sky-500/15 border border-sky-400/30 font-mono text-xs font-semibold text-sky-300">Most Popular</span>
+              <span class="font-display font-bold text-lg text-white">Day Pass</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">One-Time · 24h</span>
             </div>
             <div>
-              <div class="font-display font-extrabold text-3xl text-white">₦2,500 <span class="text-sm font-normal text-slate-400">/ 30 days</span></div>
-              <p class="text-xs text-sky-300 mt-1">150 scans daily · Instant Paystack activation</p>
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-3xl text-white">$1.50</span>
+                <span data-local-price="day" class="font-mono text-sm font-semibold text-sky-300">≈ ₦2,330</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">150 scans for 24 hours · No auto-renewal</p>
             </div>
-            <ul class="space-y-2.5 text-sm text-slate-200 pt-2 border-t border-white/[0.08]">
-              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans per day</strong> for 30 days</span></li>
-              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Email-linked quota synced across sessions</span></li>
-              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Full episode, trailer & streaming details</span></li>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans</strong> for 24 hours</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Single payment · No recurring billing</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>All-inclusive price (no extra checkout fee)</span></li>
             </ul>
           </div>
-          <button id="pricingUpgradeBtn" type="button" class="w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-sm text-white cursor-pointer transition-all">
-            ClipZam Pro · ₦2,500
+          <button type="button" data-select-tier="day" class="select-tier-btn w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-sky-500/20 border border-sky-400/40 font-display font-bold text-xs sm:text-sm text-white cursor-pointer transition-all">
+            Get Day Pass · $1.50
+          </button>
+        </div>
+
+        <!-- Tier 2: Weekly Pro ($2.50 / week) -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Weekly Pro</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">7 Days</span>
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-3xl text-white">$2.50</span>
+                <span class="text-xs text-slate-400">/ week</span>
+                <span data-local-price="weekly" class="font-mono text-sm font-semibold text-sky-300">≈ ₦3,880</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">150 scans daily · Auto-renews weekly (cancel anytime)</p>
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans per day</strong> for 7 days</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Auto-renewal ON by default (toggle anytime)</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Email-linked quota synced across sessions</span></li>
+            </ul>
+          </div>
+          <button type="button" data-select-tier="weekly" class="select-tier-btn w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-sky-500/20 border border-sky-400/40 font-display font-bold text-xs sm:text-sm text-white cursor-pointer transition-all">
+            Start Weekly Pro · $2.50
+          </button>
+        </div>
+
+        <!-- Tier 3: Monthly Pro ($3.50 / month — Best Value) -->
+        <div class="glass-card rounded-2xl border-2 border-sky-400/65 p-5 flex flex-col justify-between space-y-5 shadow-2xl shadow-sky-500/15">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Monthly Pro</span>
+              <span class="px-2.5 py-1 rounded-lg bg-sky-500/20 border border-sky-400/40 font-mono text-xs font-semibold text-sky-300">Best Value</span>
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-3xl text-white">$3.50</span>
+                <span class="text-xs text-slate-400">/ month</span>
+                <span data-local-price="monthly" class="font-mono text-sm font-semibold text-sky-300">≈ ₦5,430</span>
+              </div>
+              <p class="text-xs text-sky-300 mt-1">150 scans daily · Auto-renews monthly (cancel anytime)</p>
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-200 pt-2 border-t border-white/[0.08]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans per day</strong> for 30 days</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Auto-renewal ON by default (toggle anytime)</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>All-inclusive price · Instant activation</span></li>
+            </ul>
+          </div>
+          <button id="pricingUpgradeBtn" type="button" data-select-tier="monthly" class="select-tier-btn w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-xs sm:text-sm text-white cursor-pointer transition-all">
+            Start Monthly Pro · $3.50
           </button>
         </div>
       </div>
@@ -488,7 +566,7 @@
     </section>
   </main>
 
-  <!-- Mobile Bottom Navigation Bar (Home | History | Pricing | How It Works) -->
+  <!-- Mobile Bottom Navigation Bar -->
   <nav aria-label="Bottom navigation" class="fixed bottom-0 inset-x-0 z-30 md:hidden bg-[#060B1C]/95 backdrop-blur-xl border-t border-white/[0.08]">
     <div class="grid grid-cols-4 h-16 max-w-md mx-auto">
       <button type="button" data-bottom-nav="home" class="bottom-nav-btn flex flex-col items-center justify-center gap-1 text-sky-400 cursor-pointer">
@@ -516,7 +594,6 @@
   <!-- No-Scroll Instant Result Modal / Overlay -->
   <div id="resultModal" class="fixed inset-0 z-40 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md">
     <div class="w-full max-w-2xl max-h-[92dvh] bg-surface border border-sky-400/25 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-up">
-      <!-- Sticky Modal Header -->
       <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-white/[0.08] bg-obsidian/75 shrink-0">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]"></span>
@@ -532,25 +609,25 @@
         </div>
       </div>
 
-      <!-- Scrollable Internal Result Body -->
       <div id="out" class="overflow-y-auto flex-1"></div>
     </div>
   </div>
 
-  <!-- Plan & Paystack Checkout Modal -->
-  <div id="planModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-    <div class="w-full max-w-sm bg-surface border border-white/[0.12] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
-      <div class="flex items-start justify-between gap-3 px-5 pt-5 pb-3">
+  <!-- Plan, Country Currency & Paystack Checkout Modal -->
+  <div id="planModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+    <div class="w-full max-w-md max-h-[92dvh] overflow-y-auto bg-surface border border-white/[0.12] rounded-2xl shadow-2xl animate-fade-up">
+      <div class="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-white/[0.07]">
         <div>
-          <h2 class="font-display font-bold text-lg text-white leading-tight">ClipZam Pro</h2>
-          <p class="text-xs text-slate-400 mt-1">Free: 3/day · ClipZam Pro: ₦2,500 / 30 days (150/day)</p>
+          <h2 class="font-display font-bold text-lg text-white leading-tight">ClipZam Pro Plans</h2>
+          <p class="text-xs text-slate-400 mt-1">Free: 3 scans/day · Pro: 150 scans/day</p>
         </div>
         <button id="closePlanBtn" type="button" aria-label="Close" class="min-w-[34px] min-h-[34px] rounded-lg bg-elevated hover:bg-white/[0.1] flex items-center justify-center text-slate-400 hover:text-white cursor-pointer">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
 
-      <div class="px-5 pb-5 space-y-4">
+      <div class="p-5 space-y-4">
+        <!-- Active Plan Status -->
         <div class="flex items-center justify-between text-xs py-2.5 px-3.5 rounded-xl bg-elevated border border-white/[0.07]">
           <span id="modalStatusSummary" class="text-slate-200 font-mono">FREE · 3/3 left today</span>
           <span id="modalExpiryTag" class="font-mono text-emerald-400 hidden"></span>
@@ -558,6 +635,74 @@
 
         <div id="modalAlert" class="hidden rounded-xl px-3.5 py-2.5 text-xs border leading-relaxed"></div>
 
+        <!-- Country & Local Currency Selector -->
+        <div class="space-y-1.5">
+          <label for="modalCountrySelect" class="block text-xs font-medium text-slate-300">
+            Select Country & Currency
+          </label>
+          <select id="modalCountrySelect" class="country-selector w-full rounded-xl bg-obsidian border border-white/[0.12] focus:border-sky-400 focus:outline-none px-3.5 py-2.5 text-xs sm:text-sm text-white cursor-pointer">
+            <option value="NG">🇳🇬 Nigeria — NGN (Bank Transfer, USSD, Card)</option>
+            <option value="US">🇺🇸 United States — USD (International Card)</option>
+            <option value="GB">🇬🇧 United Kingdom — GBP (International Card)</option>
+            <option value="GH">🇬🇭 Ghana — GHS (International Card)</option>
+            <option value="KE">🇰🇪 Kenya — KES (International Card)</option>
+            <option value="ZA">🇿🇦 South Africa — ZAR (International Card)</option>
+            <option value="CA">🇨🇦 Canada — CAD (International Card)</option>
+            <option value="EU">🇪🇺 Europe — EUR (International Card)</option>
+          </select>
+          <p id="modalPaymentMethodHint" class="text-[11px] text-sky-300 font-mono">
+            Charged in NGN via Paystack (Bank Transfer, USSD & Cards supported)
+          </p>
+        </div>
+
+        <!-- Tier Selector Pills (Day Pass $1.50 | Weekly $2.50 | Monthly $3.50) -->
+        <div class="space-y-1.5">
+          <span class="block text-xs font-medium text-slate-300">Choose Plan (All-Inclusive Price)</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-modal-tier="day" class="modal-tier-card rounded-xl border border-white/[0.1] bg-elevated/80 p-2.5 text-left cursor-pointer transition-all">
+              <div class="text-[11px] font-semibold text-slate-300">Day Pass</div>
+              <div class="font-display font-extrabold text-sm sm:text-base text-white mt-0.5">$1.50</div>
+              <div data-local-price="day" class="font-mono text-[10px] text-sky-300 mt-0.5">≈ ₦2,330</div>
+              <div class="text-[10px] text-slate-400 mt-1">24h · 150 scans</div>
+            </button>
+
+            <button type="button" data-modal-tier="weekly" class="modal-tier-card rounded-xl border border-white/[0.1] bg-elevated/80 p-2.5 text-left cursor-pointer transition-all">
+              <div class="text-[11px] font-semibold text-slate-300">Weekly</div>
+              <div class="font-display font-extrabold text-sm sm:text-base text-white mt-0.5">$2.50</div>
+              <div data-local-price="weekly" class="font-mono text-[10px] text-sky-300 mt-0.5">≈ ₦3,880</div>
+              <div class="text-[10px] text-slate-400 mt-1">7d · 150/day</div>
+            </button>
+
+            <button type="button" data-modal-tier="monthly" class="modal-tier-card rounded-xl border-2 border-sky-400 bg-sky-500/10 p-2.5 text-left cursor-pointer transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-white">Monthly</span>
+                <span class="text-[9px] font-mono uppercase text-sky-300">Best</span>
+              </div>
+              <div class="font-display font-extrabold text-sm sm:text-base text-white mt-0.5">$3.50</div>
+              <div data-local-price="monthly" class="font-mono text-[10px] text-sky-300 mt-0.5">≈ ₦5,430</div>
+              <div class="text-[10px] text-slate-300 mt-1">30d · 150/day</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Auto-Renewal Control (ON by default for Weekly/Monthly, Hidden for One-Time Day Pass) -->
+        <div id="autoRenewBox" class="rounded-xl bg-elevated/90 border border-white/[0.08] p-3 flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+              <span>Auto-Renewal</span>
+              <span id="autoRenewBadge" class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-mono text-[10px]">ON</span>
+            </div>
+            <p id="autoRenewHelpText" class="text-[11px] text-slate-400 mt-0.5 leading-snug">
+              Renews automatically every 30 days. Toggle off anytime.
+            </p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input id="autoRenewToggle" type="checkbox" checked class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
+          </label>
+        </div>
+
+        <!-- Email Input -->
         <div>
           <label for="subEmailInput" class="block text-xs font-medium text-slate-300 mb-1.5">
             Email for plan & receipt
@@ -570,8 +715,9 @@
           >
         </div>
 
+        <!-- Checkout CTA -->
         <button id="upgradePaystackBtn" type="button" class="w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-sm text-white cursor-pointer transition-all">
-          Continue to Paystack · ₦2,500
+          Pay $3.50 (≈ ₦5,430) via Paystack
         </button>
       </div>
     </div>
@@ -598,11 +744,137 @@ const CONFIG = {
   STATUS_ENDPOINT: "/api/subscription/status",
   PAYSTACK_INIT_ENDPOINT: "/api/paystack/init",
   PAYSTACK_VERIFY_ENDPOINT: "/api/paystack/verify",
+  PAYSTACK_AUTORENEW_ENDPOINT: "/api/subscription/autorenew",
+  FX_RATES_ENDPOINT: "https://open.er-api.com/v6/latest/USD",
   EMAIL_STORAGE_KEY: "cz_sub_email",
+  COUNTRY_STORAGE_KEY: "cz_selected_country",
   HISTORY_STORAGE_KEY: "cz_daily_history_v1",
   MAX_SECONDS: 15,
   MAX_MB: 10,
   MAX_RAW_MB: 45
+};
+
+/* USD All-Inclusive Plans (Paystack fees baked in) */
+const PLANS = {
+  day: {
+    id: "day",
+    label: "Day Pass",
+    usd: 1.50,
+    durationDays: 1,
+    dailyLimit: 150,
+    supportsAutoRenew: false,
+    periodText: "24 hours"
+  },
+  weekly: {
+    id: "weekly",
+    label: "Weekly Pro",
+    usd: 2.50,
+    durationDays: 7,
+    dailyLimit: 150,
+    supportsAutoRenew: true,
+    periodText: "7 days"
+  },
+  monthly: {
+    id: "monthly",
+    label: "Monthly Pro",
+    usd: 3.50,
+    durationDays: 30,
+    dailyLimit: 150,
+    supportsAutoRenew: true,
+    periodText: "30 days"
+  }
+};
+
+/* Supported Countries, Currencies & Paystack Settlement Routing */
+const COUNTRIES = {
+  NG: {
+    code: "NG",
+    name: "Nigeria",
+    currency: "NGN",
+    symbol: "₦",
+    fallbackRate: 1550,
+    roundStep: 10,
+    chargeCurrency: "NGN",
+    channelSummary: "Paystack Nigeria · Bank Transfer, USSD & Cards",
+    checkoutHint: "Charged in NGN via Paystack (Bank Transfer, USSD & Cards supported)"
+  },
+  US: {
+    code: "US",
+    name: "United States",
+    currency: "USD",
+    symbol: "$",
+    fallbackRate: 1,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa, Mastercard & Amex",
+    checkoutHint: "Processed securely via Paystack International Card (auto-converted by your bank)"
+  },
+  GB: {
+    code: "GB",
+    name: "United Kingdom",
+    currency: "GBP",
+    symbol: "£",
+    fallbackRate: 0.79,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Processed securely via Paystack International Card (auto-converted by your bank)"
+  },
+  GH: {
+    code: "GH",
+    name: "Ghana",
+    currency: "GHS",
+    symbol: "GH₵",
+    fallbackRate: 15.8,
+    roundStep: 0.5,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in GHS · Processed via Paystack International Card"
+  },
+  KE: {
+    code: "KE",
+    name: "Kenya",
+    currency: "KES",
+    symbol: "KSh ",
+    fallbackRate: 129,
+    roundStep: 5,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in KES · Processed via Paystack International Card"
+  },
+  ZA: {
+    code: "ZA",
+    name: "South Africa",
+    currency: "ZAR",
+    symbol: "R",
+    fallbackRate: 18.2,
+    roundStep: 1,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in ZAR · Processed via Paystack International Card"
+  },
+  CA: {
+    code: "CA",
+    name: "Canada",
+    currency: "CAD",
+    symbol: "CA$",
+    fallbackRate: 1.39,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in CAD · Processed via Paystack International Card"
+  },
+  EU: {
+    code: "EU",
+    name: "Europe",
+    currency: "EUR",
+    symbol: "€",
+    fallbackRate: 0.92,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in EUR · Processed via Paystack International Card"
+  }
 };
 
 const $ = id => document.getElementById(id);
@@ -635,13 +907,19 @@ let trimStart = 0;
 let progressTimers = [];
 let playbackCapInterval = null;
 let currentRenderedMatch = null;
+
+let selectedCountryCode = "NG";
+let selectedTierId = "monthly";
+let autoRenewEnabled = true;
+let liveFxRates = {};
+
 let subState = {
   email: null,
   plan: "free",
   isPro: false,
+  autoRenew: true,
   daysRemaining: 0,
-  dailyLimit: 3,
-  proMonthlyNgn: 2500
+  dailyLimit: 3
 };
 let usageState = {
   used: 0,
@@ -657,6 +935,185 @@ const fmtTime = sec => {
   const s = Math.max(0, Math.floor(sec));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
+
+/* ============================================================================
+ * Country, Live Currency Conversion & Tier Pricing Logic
+ * ========================================================================== */
+function detectDefaultCountry() {
+  try {
+    const saved = localStorage.getItem(CONFIG.COUNTRY_STORAGE_KEY);
+    if (saved && COUNTRIES[saved]) return saved;
+  } catch (_) {}
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    if (tz.includes("Lagos")) return "NG";
+    if (tz.includes("Accra")) return "GH";
+    if (tz.includes("Nairobi")) return "KE";
+    if (tz.includes("Johannesburg")) return "ZA";
+    if (tz.includes("London")) return "GB";
+    if (tz.includes("Toronto") || tz.includes("Vancouver")) return "CA";
+    if (tz.startsWith("Europe/")) return "EU";
+    if (tz.startsWith("America/")) return "US";
+  } catch (_) {}
+  return "NG";
+}
+
+function getRateForCurrency(currency) {
+  if (currency === "USD") return 1;
+  if (liveFxRates && typeof liveFxRates[currency] === "number" && liveFxRates[currency] > 0) {
+    return liveFxRates[currency];
+  }
+  const match = Object.values(COUNTRIES).find(c => c.currency === currency);
+  return match ? match.fallbackRate : 1;
+}
+
+function formatConvertedAmount(usdAmount, countryObj) {
+  const rate = getRateForCurrency(countryObj.currency);
+  const raw = usdAmount * rate;
+  if (countryObj.currency === "USD") {
+    return `$${usdAmount.toFixed(2)}`;
+  }
+  if (countryObj.roundStep >= 1) {
+    const rounded = Math.round(raw / countryObj.roundStep) * countryObj.roundStep;
+    return `${countryObj.symbol}${rounded.toLocaleString()}`;
+  }
+  return `${countryObj.symbol}${raw.toFixed(2)}`;
+}
+
+function getNgnEquivalent(usdAmount) {
+  const ngnRate = getRateForCurrency("NGN");
+  return Math.round((usdAmount * ngnRate) / 10) * 10;
+}
+
+async function fetchLiveExchangeRates() {
+  try {
+    const res = await fetch(CONFIG.FX_RATES_ENDPOINT);
+    const data = await res.json().catch(() => null);
+    if (res.ok && data && data.rates) {
+      liveFxRates = data.rates;
+      updatePricingAndCurrencyUI();
+    }
+  } catch (_) {}
+}
+
+function setSelectedCountry(code) {
+  if (!COUNTRIES[code]) return;
+  selectedCountryCode = code;
+  try { localStorage.setItem(CONFIG.COUNTRY_STORAGE_KEY, code); } catch (_) {}
+  document.querySelectorAll('.country-selector').forEach(sel => {
+    sel.value = code;
+  });
+  updatePricingAndCurrencyUI();
+}
+
+function setSelectedTier(tierId) {
+  if (!PLANS[tierId]) return;
+  selectedTierId = tierId;
+
+  document.querySelectorAll('.modal-tier-card').forEach(card => {
+    const active = card.dataset.modalTier === tierId;
+    card.className = active
+      ? 'modal-tier-card rounded-xl border-2 border-sky-400 bg-sky-500/10 p-2.5 text-left cursor-pointer transition-all'
+      : 'modal-tier-card rounded-xl border border-white/[0.1] bg-elevated/80 hover:border-white/25 p-2.5 text-left cursor-pointer transition-all';
+  });
+
+  const plan = PLANS[tierId];
+  const autoBox = $('autoRenewBox');
+  if (plan.supportsAutoRenew) {
+    autoBox.classList.remove('hidden');
+    $('autoRenewHelpText').textContent = `Renews automatically every ${plan.periodText}. Toggle off anytime.`;
+  } else {
+    autoBox.classList.add('hidden');
+  }
+
+  updatePricingAndCurrencyUI();
+}
+
+function updateAutoRenewUI() {
+  $('autoRenewToggle').checked = !!autoRenewEnabled;
+  const badge = $('autoRenewBadge');
+  if (autoRenewEnabled) {
+    badge.textContent = 'ON';
+    badge.className = 'px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-mono text-[10px]';
+  } else {
+    badge.textContent = 'OFF';
+    badge.className = 'px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 font-mono text-[10px]';
+  }
+}
+
+function updatePricingAndCurrencyUI() {
+  const country = COUNTRIES[selectedCountryCode] || COUNTRIES.NG;
+  const plan = PLANS[selectedTierId] || PLANS.monthly;
+
+  // Update FX rate & payment method banners on Pricing page
+  if (country.currency === "USD") {
+    $('fxRateBannerText').textContent = "Base currency: USD ($1.50 / $2.50 / $3.50 all-inclusive)";
+  } else {
+    const sampleRate = formatConvertedAmount(1, country);
+    $('fxRateBannerText').textContent = `Live rate: $1 USD ≈ ${sampleRate} ${country.currency}`;
+  }
+  $('paymentChannelBannerText').textContent = country.channelSummary;
+  $('modalPaymentMethodHint').textContent = country.checkoutHint;
+
+  // Update local currency estimates across Pricing cards and Checkout modal
+  ['day', 'weekly', 'monthly'].forEach(tKey => {
+    const p = PLANS[tKey];
+    const formattedLocal = formatConvertedAmount(p.usd, country);
+    document.querySelectorAll(`[data-local-price="${tKey}"]`).forEach(el => {
+      if (country.currency === "USD") {
+        el.textContent = "USD";
+      } else {
+        el.textContent = `≈ ${formattedLocal}`;
+      }
+    });
+  });
+
+  // Update Checkout button text
+  const localTotal = formatConvertedAmount(plan.usd, country);
+  const priceTag = country.currency === "USD"
+    ? `$${plan.usd.toFixed(2)}`
+    : `$${plan.usd.toFixed(2)} (≈ ${localTotal})`;
+
+  $('upgradePaystackBtn').textContent = `Pay ${priceTag} via Paystack`;
+}
+
+document.querySelectorAll('.country-selector').forEach(sel => {
+  sel.addEventListener('change', e => setSelectedCountry(e.target.value));
+});
+
+document.querySelectorAll('.modal-tier-card').forEach(card => {
+  card.addEventListener('click', () => setSelectedTier(card.dataset.modalTier));
+});
+
+document.querySelectorAll('.select-tier-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setSelectedTier(btn.dataset.selectTier);
+    openPlanModal();
+  });
+});
+
+$('autoRenewToggle').addEventListener('change', async e => {
+  autoRenewEnabled = !!e.target.checked;
+  updateAutoRenewUI();
+
+  // If user already has an active subscription, sync auto-renewal toggle with backend
+  const email = getSavedEmail();
+  if (email && subState.isPro) {
+    try {
+      await fetch(CONFIG.PAYSTACK_AUTORENEW_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, autoRenew: autoRenewEnabled })
+      });
+      setModalAlert(
+        autoRenewEnabled
+          ? 'Auto-renewal turned ON for your upcoming billing cycle.'
+          : 'Auto-renewal turned OFF. Your current paid days remain active until expiry.',
+        'info'
+      );
+    } catch (_) {}
+  }
+});
 
 /* ============================================================================
  * Navigation (Home, Today's History, Pricing, How It Works)
@@ -827,7 +1284,7 @@ $('clearHistoryBtn').addEventListener('click', () => {
 });
 
 /* ============================================================================
- * Email & Subscription State (Backend Parity with index (1)_2.html)
+ * Email & Subscription State
  * ========================================================================== */
 function getSavedEmail() {
   try {
@@ -848,7 +1305,11 @@ function updateSubscriptionUI() {
   const isPro = !!subState.isPro;
   const remaining = Math.max(0, Number(usageState.remaining ?? subState.dailyLimit ?? 3));
   const limit = Math.max(1, Number(usageState.limit ?? subState.dailyLimit ?? 3));
-  const price = Number(subState.proMonthlyNgn || 2500);
+
+  if (typeof subState.autoRenew === "boolean") {
+    autoRenewEnabled = subState.autoRenew;
+    updateAutoRenewUI();
+  }
 
   $('headerPlanQuota').textContent = `${remaining}/${limit} Left`;
   $('headerPlanQuota').className = remaining === 0
@@ -860,10 +1321,6 @@ function updateSubscriptionUI() {
     : (isPro ? 'w-4 h-4 text-emerald-400 shrink-0' : 'w-4 h-4 text-sky-400 shrink-0');
 
   $('freePlanBtn').textContent = isPro ? 'Switch to Scanner' : 'Current Plan';
-  $('pricingUpgradeBtn').textContent = isPro
-    ? `Extend ClipZam Pro · ₦${price.toLocaleString()}`
-    : `ClipZam Pro · ₦${price.toLocaleString()}`;
-
   $('modalStatusSummary').textContent = `${isPro ? 'PRO' : 'FREE'} · ${remaining}/${limit} left today`;
 
   const expiryEl = $('modalExpiryTag');
@@ -874,9 +1331,7 @@ function updateSubscriptionUI() {
     expiryEl.classList.add('hidden');
   }
 
-  $('upgradePaystackBtn').textContent = isPro
-    ? `Extend 30 Days · ₦${price.toLocaleString()}`
-    : `Continue to Paystack · ₦${price.toLocaleString()}`;
+  updatePricingAndCurrencyUI();
 }
 
 function setModalAlert(message, type = 'info') {
@@ -961,7 +1416,8 @@ async function handlePaystackReturnIfNeeded() {
     const activatedEmail = data.subscription?.email || email;
     if (activatedEmail) setSavedEmail(activatedEmail);
     await refreshSubscriptionStatus(activatedEmail);
-    setModalAlert('ClipZam Pro active for 30 days (150 scans/day).', 'ok');
+    const days = data.subscription?.daysRemaining || PLANS[selectedTierId]?.durationDays || 30;
+    setModalAlert(`ClipZam Pro active for ${days} day${days > 1 ? 's' : ''} (150 scans/day).`, 'ok');
   } catch (err) {
     setModalAlert(err?.message || 'Could not verify payment.', 'err');
   }
@@ -978,10 +1434,15 @@ async function startPaystackCheckout() {
   setSavedEmail(inputEmail);
   await refreshSubscriptionStatus(inputEmail);
 
+  const plan = PLANS[selectedTierId] || PLANS.monthly;
+  const country = COUNTRIES[selectedCountryCode] || COUNTRIES.NG;
+  const ngnAmount = getNgnEquivalent(plan.usd);
+  const autoRenew = plan.supportsAutoRenew ? !!autoRenewEnabled : false;
+
   const btn = $('upgradePaystackBtn');
   const origText = btn.textContent;
   btn.disabled = true;
-  btn.textContent = 'Redirecting...';
+  btn.textContent = 'Redirecting to Paystack...';
   setModalAlert('', 'info');
 
   try {
@@ -990,6 +1451,15 @@ async function startPaystackCheckout() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: inputEmail,
+        tier: plan.id,
+        amountUsd: plan.usd,
+        amountNgn: ngnAmount,
+        currency: country.chargeCurrency,
+        displayCurrency: country.currency,
+        country: country.code,
+        durationDays: plan.durationDays,
+        dailyLimit: plan.dailyLimit,
+        autoRenew,
         callbackUrl: `${window.location.origin}${window.location.pathname}?paystack_verify=1`
       })
     });
@@ -1011,7 +1481,6 @@ async function startPaystackCheckout() {
 
 $('openPlanBtn').addEventListener('click', () => openPlanModal());
 $('profileAccountBtn').addEventListener('click', () => openPlanModal());
-$('pricingUpgradeBtn').addEventListener('click', () => openPlanModal());
 $('closePlanBtn').addEventListener('click', closePlanModal);
 $('planModal').addEventListener('click', e => { if (e.target === $('planModal')) closePlanModal(); });
 $('subEmailInput').addEventListener('change', () => {
@@ -1288,7 +1757,6 @@ go.addEventListener('click', async () => {
         throw new Error('Trimmed clip is still over 10 MB. Try a lower-resolution video.');
       }
     } else {
-      // Play the <=15s clip inside the cinema frame while AI analyzes it
       preview.currentTime = 0;
       startLivePlaybackMonitor(0);
       preview.play().catch(() => {
@@ -1510,6 +1978,9 @@ function render(d, options = {}) {
 }
 
 (async function initApp() {
+  setSelectedCountry(detectDefaultCountry());
+  setSelectedTier("monthly");
+  updateAutoRenewUI();
   purgeExpiredHistoryIfNeeded();
   setInterval(() => {
     const before = localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY);
@@ -1519,6 +1990,7 @@ function render(d, options = {}) {
     }
   }, 30000);
   updateSubscriptionUI();
+  fetchLiveExchangeRates();
   await refreshSubscriptionStatus();
   await handlePaystackReturnIfNeeded();
 })();
