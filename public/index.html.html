@@ -1,0 +1,1999 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ClipZam AI — Find it. Watch it.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          display: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          obsidian: '#050814',
+          surface: '#0A1024',
+          elevated: '#101A36',
+          accent: {
+            DEFAULT: '#1D8BFF',
+            cyan: '#00E5FF',
+            violet: '#7C3AED'
+          }
+        }
+      }
+    }
+  };
+</script>
+<style>
+  :root {
+    --bg: #050814;
+    --surface: #0A1024;
+    --elevated: #101A36;
+  }
+
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(ellipse 85% 50% at 78% 12%, rgba(24, 136, 255, 0.25), rgba(0, 229, 255, 0.06) 50%, transparent 76%),
+      radial-gradient(circle 380px at 50% 48%, rgba(29, 139, 255, 0.16), transparent 72%),
+      radial-gradient(ellipse 65% 45% at 15% 86%, rgba(124, 58, 237, 0.14), transparent 75%);
+    color: #F4F7FC;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .text-gradient-watch {
+    background: linear-gradient(90deg, #27A6FF 0%, #00E5FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .btn-primary-blue {
+    background: linear-gradient(135deg, #27A6FF 0%, #1668E3 100%);
+    box-shadow: 0 10px 28px -6px rgba(24, 144, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  }
+  .btn-primary-blue:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3BB2FF 0%, #1E76F2 100%);
+  }
+
+  .glass-card {
+    background: linear-gradient(180deg, rgba(11, 19, 42, 0.88) 0%, rgba(7, 12, 28, 0.95) 100%);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    box-shadow: 0 22px 54px -15px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .cinema-drop-zone {
+    background:
+      radial-gradient(circle at 50% 38%, rgba(29, 139, 255, 0.20), rgba(10, 16, 36, 0.92) 72%);
+    border: 1.5px dashed rgba(56, 189, 248, 0.42);
+    transition: border-color 0.22s ease, background 0.22s ease, transform 0.2s ease, box-shadow 0.22s ease;
+  }
+  .cinema-drop-zone:hover,
+  .cinema-drop-zone.over {
+    border-color: #00E5FF;
+    box-shadow: 0 0 36px rgba(0, 229, 255, 0.22), inset 0 0 24px rgba(29, 139, 255, 0.14);
+    transform: translateY(-1px);
+  }
+
+  .cinema-emblem-orb {
+    background: radial-gradient(circle at 35% 28%, #47B8FF 0%, #1C88FF 52%, #0D57D6 100%);
+    box-shadow:
+      0 0 38px rgba(29, 139, 255, 0.55),
+      0 14px 32px -8px rgba(13, 87, 214, 0.85),
+      inset 0 2px 4px rgba(255, 255, 255, 0.42);
+  }
+
+  input[type="range"].trim-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    outline: none;
+  }
+  input[type="range"].trim-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #27A6FF, #1668E3);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(39, 166, 255, 0.6);
+    cursor: pointer;
+  }
+  input[type="range"].trim-slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #27A6FF, #1668E3);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 10px rgba(39, 166, 255, 0.6);
+    cursor: pointer;
+  }
+
+  .shelf-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+  }
+  .shelf-scroll::-webkit-scrollbar { height: 5px; }
+  .shelf-scroll::-webkit-scrollbar-track { background: transparent; }
+  .shelf-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 999px; }
+
+  @keyframes scanLine {
+    0% { top: 0%; opacity: 0; }
+    15% { opacity: 0.95; }
+    85% { opacity: 0.95; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .scanner-beam {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #00E5FF, #27A6FF, #7C3AED, #00E5FF, transparent);
+    box-shadow: 0 0 18px 3px rgba(0, 229, 255, 0.85);
+    animation: scanLine 1.9s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .animate-fade-up {
+    animation: fadeUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+</style>
+</head>
+<body class="flex flex-col pb-20 md:pb-0 selection:bg-sky-500/25 selection:text-white">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-30 border-b border-white/[0.08] bg-obsidian/88 backdrop-blur-xl">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <!-- Custom ClipZam Logo -->
+      <a href="#home" id="brandHomeLink" class="inline-flex items-center shrink-0 focus:outline-none py-1">
+        <svg class="h-8 sm:h-9 w-auto shrink-0" viewBox="0 0 366 92" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ClipZam">
+          <defs>
+            <linearGradient id="czRingGrad" x1="8" y1="20" x2="84" y2="76" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00F5FF"/>
+              <stop offset="48%" stop-color="#1D8BFF"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+            <linearGradient id="czZamGrad" x1="206" y1="22" x2="358" y2="70" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00E5FF"/>
+              <stop offset="46%" stop-color="#2575FC"/>
+              <stop offset="100%" stop-color="#7C3AED"/>
+            </linearGradient>
+          </defs>
+          <path d="M10 25V15C10 12.2386 12.2386 10 15 10H25" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M67 10H77C79.7614 10 82 12.2386 82 15V25" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M10 67V77C10 79.7614 12.2386 82 15 82H25" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M67 82H77C79.7614 82 82 79.7614 82 77V67" stroke="url(#czRingGrad)" stroke-width="4.2" stroke-linecap="round"/>
+          <circle cx="46" cy="46" r="29.5" stroke="url(#czRingGrad)" stroke-width="3.6" stroke-dasharray="132 14 6 22" stroke-linecap="round"/>
+          <circle cx="46" cy="46" r="21.5" stroke="url(#czRingGrad)" stroke-width="3.2" stroke-dasharray="92 14 5 18" stroke-dashoffset="24" stroke-linecap="round"/>
+          <path d="M39.5 34.2C39.5 32.78 41.08 31.92 42.28 32.68L58.4 42.98C59.52 43.69 59.52 45.31 58.4 46.02L42.28 56.32C41.08 57.08 39.5 56.22 39.5 54.8V34.2Z" fill="url(#czRingGrad)"/>
+          <text x="98" y="64" fill="#FFFFFF" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="800" font-size="50" letter-spacing="-1.6">Clip</text>
+          <text x="198" y="64" fill="url(#czZamGrad)" font-family="'Plus Jakarta Sans', 'Inter', sans-serif" font-weight="800" font-size="50" letter-spacing="-1">Zam</text>
+        </svg>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+        <button type="button" data-nav="home" class="nav-link px-3.5 py-2 rounded-xl text-white bg-white/[0.08] cursor-pointer transition-colors">Home</button>
+        <button type="button" data-nav="history" class="nav-link px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.05] cursor-pointer transition-colors">History</button>
+        <button type="button" data-nav="pricing" class="nav-link px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.05] cursor-pointer transition-colors">Pricing</button>
+        <button type="button" data-nav="how-it-works" class="nav-link px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.05] cursor-pointer transition-colors">How It Works</button>
+      </nav>
+
+      <!-- Top-Right Scan Counter Pill + Profile Icon Button -->
+      <div class="flex items-center gap-2.5 shrink-0">
+        <button id="openPlanBtn" type="button" title="View current plan & remaining scans" class="min-h-[38px] px-3.5 py-1.5 rounded-full bg-surface/95 hover:bg-elevated border border-sky-400/35 hover:border-sky-400/65 flex items-center gap-2 cursor-pointer transition-all shadow-[0_0_20px_rgba(24,144,255,0.18)]">
+          <svg id="quotaDiamondIcon" class="w-4 h-4 text-sky-400 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2L3.5 9.5L12 22L20.5 9.5L12 2Z"/>
+          </svg>
+          <span id="headerPlanQuota" class="font-mono text-xs sm:text-sm font-bold text-white">3/3 Left</span>
+        </button>
+
+        <button id="profileAccountBtn" type="button" aria-label="User Profile & Plan" title="Profile & ClipZam Pro" class="w-9 h-9 rounded-full bg-surface/95 hover:bg-elevated border border-white/[0.16] hover:border-sky-400/50 flex items-center justify-center text-slate-200 cursor-pointer transition-all shrink-0">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .7.5 1.2 1.2 1.2h16.8c.7 0 1.2-.5 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-6 pb-8">
+
+    <!-- VIEW 1: HOME (Hero + Cinema Viewfinder Clip Uploader & 15s Analyzer) -->
+    <section id="view-home" class="space-y-6">
+      <div class="text-center space-y-2 pt-1">
+        <h1 class="font-display font-extrabold text-[34px] sm:text-5xl tracking-tight text-white leading-[1.08]">
+          Find it. <span class="text-gradient-watch">Watch it.</span>
+        </h1>
+        <p class="text-sm sm:text-base text-slate-300 max-w-md mx-auto leading-relaxed">
+          Identify any movie or TV show from a video or audio clip.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-3xl p-4 sm:p-6 max-w-xl mx-auto w-full relative overflow-hidden">
+        <div class="pointer-events-none absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-sky-400/45 rounded-tl-md"></div>
+        <div class="pointer-events-none absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-sky-400/45 rounded-tr-md"></div>
+        <div class="pointer-events-none absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-purple-400/45 rounded-bl-md"></div>
+        <div class="pointer-events-none absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-purple-400/45 rounded-br-md"></div>
+
+        <!-- Idle State: Cinema Viewfinder Upload Trigger -->
+        <label id="drop" class="drop cinema-drop-zone block rounded-2xl py-9 px-5 sm:py-11 sm:px-7 text-center cursor-pointer group">
+          <div class="cinema-emblem-orb w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 rounded-full flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+            <svg class="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-[0_4px_12px_rgba(5,8,20,0.4)]" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g transform="rotate(-11 16 26)">
+                <rect x="15" y="15" width="50" height="11" rx="3" fill="#FFFFFF"/>
+                <path d="M23 15L28 26H22L17 15H23ZM36 15L41 26H35L30 15H36ZM49 15L54 26H48L43 15H49ZM62 15L65 22V26H61L56 15H62Z" fill="#0F62FE"/>
+              </g>
+              <rect x="15" y="29" width="50" height="36" rx="6" fill="#FFFFFF"/>
+              <rect x="15" y="29" width="50" height="6" rx="2" fill="#E0F2FE"/>
+              <path d="M35.5 40.5C35.5 39.25 36.9 38.5 37.95 39.18L49.2 46.43C50.16 47.05 50.16 48.45 49.2 49.07L37.95 56.32C36.9 57 35.5 56.25 35.5 55V40.5Z" fill="#0F62FE"/>
+            </svg>
+          </div>
+
+          <strong class="block font-display text-lg sm:text-xl font-extrabold text-white tracking-tight">
+            Upload Clip
+          </strong>
+          <span class="block text-xs sm:text-sm text-slate-300 mt-1 mb-4">
+            Drop your video or audio clip here • MP4, MOV, WebM, MP3
+          </span>
+
+          <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl btn-primary-blue text-xs sm:text-sm font-display font-bold text-white">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/>
+            </svg>
+            <span>Choose File</span>
+          </span>
+          <input type="file" id="file" accept="video/*,audio/*" class="hidden">
+        </label>
+
+        <!-- Active / Playback State -->
+        <div id="previewStage" class="hidden space-y-4">
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <p id="fileNameLabel" class="text-sm font-semibold text-white truncate">clip.mp4</p>
+              <p class="text-xs font-mono text-slate-400 mt-0.5">
+                <span id="fileSizeLabel">0 MB</span> · <span id="fileDurationLabel" class="text-emerald-400">Ready</span>
+              </p>
+            </div>
+            <button id="clearClipBtn" type="button" class="shrink-0 min-h-[36px] px-3 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.1] text-xs font-medium text-slate-200 cursor-pointer">
+              Change clip
+            </button>
+          </div>
+
+          <div class="relative rounded-2xl overflow-hidden bg-black border border-sky-400/30 shadow-inner">
+            <div id="scannerOverlay" class="hidden scanner-beam"></div>
+            <div id="liveTimerBadge" class="hidden absolute top-2.5 right-2.5 z-20 px-2.5 py-1 rounded-lg bg-obsidian/85 border border-sky-400/40 font-mono text-[11px] font-semibold text-cyan-300 backdrop-blur-md">
+              0:00 / 0:15
+            </div>
+            <video id="preview" controls playsinline hidden class="w-full max-h-[260px] sm:max-h-[310px] block bg-black focus:outline-none"></video>
+          </div>
+
+          <div id="trimBox" class="hidden rounded-xl bg-elevated/90 border border-white/[0.08] p-3.5 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-xs font-semibold text-white">Select 15-second window</span>
+              <span id="trimRangeLabel" class="font-mono text-xs text-sky-300 font-semibold">0:00 – 0:15</span>
+            </div>
+            <input id="trimSlider" type="range" min="0" max="0" step="0.5" value="0" class="trim-slider">
+            <p class="text-[11px] text-slate-400">
+              Clip is over 15s. Slide to pick the clearest 15s segment before identifying.
+            </p>
+          </div>
+        </div>
+
+        <!-- Optional Clues Input -->
+        <div class="mt-4 rounded-xl bg-elevated/80 border border-white/[0.08] p-3.5">
+          <label for="clueInput" class="flex items-center justify-between text-xs font-semibold text-white mb-2">
+            <span>Add Optional Clues</span>
+            <span class="text-[11px] font-mono font-normal text-slate-400">Dialogue · Actors · Scene</span>
+          </label>
+          <input
+            id="clueInput"
+            type="text"
+            maxlength="240"
+            placeholder="e.g. Dialogue, actors, scene description..."
+            class="w-full rounded-xl bg-obsidian/90 border border-white/[0.1] focus:border-sky-400 focus:outline-none px-3.5 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500"
+          >
+        </div>
+
+        <!-- Error / Status Note -->
+        <div id="note" class="msg info hidden mt-4 rounded-xl text-xs sm:text-sm" hidden></div>
+
+        <!-- Laser Scan Progress -->
+        <div id="progressBarBox" class="hidden mt-4 rounded-xl bg-elevated/90 border border-sky-400/25 p-3.5">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span id="progressStageText" class="font-medium text-slate-200 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+              Playing & analyzing 15s clip...
+            </span>
+            <span id="progressTimerText" class="font-mono text-[11px] text-sky-300">Scanning</span>
+          </div>
+          <div class="h-1.5 w-full rounded-full bg-white/[0.08] overflow-hidden">
+            <div id="progressFill" class="h-full btn-primary-blue rounded-full transition-all duration-700" style="width: 20%"></div>
+          </div>
+        </div>
+
+        <!-- Identify Clip CTA -->
+        <button id="go" disabled class="mt-4 w-full min-h-[48px] py-3 px-5 rounded-xl font-display font-bold text-sm sm:text-base text-white btn-primary-blue active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span id="goLabel">Identify Clip</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- VIEW 2: TODAY'S HISTORY (Auto-Expiring Daily at 12:00 AM) -->
+    <section id="view-history" class="hidden space-y-5 animate-fade-up">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h2 class="font-display font-extrabold text-2xl text-white">Today's History</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-sky-500/15 border border-sky-400/30 font-mono text-[11px] text-sky-300">
+              Resets 12:00 AM
+            </span>
+          </div>
+          <p class="text-xs sm:text-sm text-slate-400 mt-1">
+            Matches identified today. Automatically clears at midnight.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="clearHistoryBtn" type="button" class="min-h-[38px] px-3 py-2 rounded-xl bg-elevated hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-300 cursor-pointer">
+            Clear Today
+          </button>
+          <button type="button" data-nav="home" class="min-h-[38px] px-3.5 py-2 rounded-xl btn-primary-blue text-xs font-semibold text-white cursor-pointer">
+            Scan Clip
+          </button>
+        </div>
+      </div>
+
+      <div id="historyList" class="space-y-3"></div>
+    </section>
+
+    <!-- VIEW 3: PRICING (Country/Currency Selector + USD Base Tiers + Paystack Checkout) -->
+    <section id="view-pricing" class="hidden space-y-6 animate-fade-up">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">
+            Unlock More Scans with <span class="text-gradient-watch">ClipZam Pro</span>
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            All-inclusive pricing in USD with live local currency conversion.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Country / Currency Selector -->
+          <div class="flex items-center gap-2 bg-surface border border-sky-400/30 rounded-xl px-3 py-1.5">
+            <label for="pricingCountrySelect" class="text-xs text-slate-400 shrink-0">Country:</label>
+            <select id="pricingCountrySelect" class="country-selector bg-transparent text-xs sm:text-sm font-semibold text-white focus:outline-none cursor-pointer">
+              <option value="NG" class="bg-obsidian text-white">🇳🇬 Nigeria (NGN)</option>
+              <option value="US" class="bg-obsidian text-white">🇺🇸 United States (USD)</option>
+              <option value="GB" class="bg-obsidian text-white">🇬🇧 United Kingdom (GBP)</option>
+              <option value="GH" class="bg-obsidian text-white">🇬🇭 Ghana (GHS)</option>
+              <option value="KE" class="bg-obsidian text-white">🇰🇪 Kenya (KES)</option>
+              <option value="ZA" class="bg-obsidian text-white">🇿🇦 South Africa (ZAR)</option>
+              <option value="CA" class="bg-obsidian text-white">🇨🇦 Canada (CAD)</option>
+              <option value="EU" class="bg-obsidian text-white">🇪🇺 Europe (EUR)</option>
+            </select>
+          </div>
+
+          <button type="button" data-nav="home" class="min-h-[38px] px-3.5 py-2 rounded-xl bg-surface hover:bg-elevated border border-white/[0.08] text-xs font-medium text-slate-200 cursor-pointer">
+            ← Scanner
+          </button>
+        </div>
+      </div>
+
+      <!-- Live FX Rate & Payment Method Banner -->
+      <div class="rounded-2xl bg-elevated/70 border border-white/[0.08] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+        <div class="flex items-center gap-2 text-slate-300">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span id="fxRateBannerText">Live rate: $1 USD ≈ ₦1,550 NGN</span>
+        </div>
+        <span id="paymentChannelBannerText" class="font-mono text-[11px] text-sky-300">
+          Paystack Nigeria · Bank Transfer, USSD & Cards
+        </span>
+      </div>
+
+      <!-- 4-Tier Grid: Free + Day Pass ($1.50) + Weekly Pro ($2.50) + Monthly Pro ($3.50) -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Tier 0: Free -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Free</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">No Sign-Up</span>
+            </div>
+            <div>
+              <div class="font-display font-extrabold text-3xl text-white">$0 <span class="text-sm font-normal text-slate-400">/ forever</span></div>
+              <p class="text-xs text-slate-400 mt-1">3 scans daily · Resets every midnight</p>
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>3 clip identifications per day</span></li>
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Movie & TV episode matching</span></li>
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Trailers & streaming platforms</span></li>
+            </ul>
+          </div>
+          <button id="freePlanBtn" type="button" data-nav="home" class="w-full min-h-[42px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-xs sm:text-sm font-semibold text-slate-200 cursor-pointer transition-colors">
+            Current Plan
+          </button>
+        </div>
+
+        <!-- Tier 1: Day Pass ($1.50 One-Time) -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Day Pass</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">One-Time · 24h</span>
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-3xl text-white">$1.50</span>
+                <span data-local-price="day" class="font-mono text-sm font-semibold text-sky-300">≈ ₦2,330</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">150 scans for 24 hours · No auto-renewal</p>
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans</strong> for 24 hours</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Single payment · No recurring billing</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>All-inclusive price (no extra checkout fee)</span></li>
+            </ul>
+          </div>
+          <button type="button" data-select-tier="day" class="select-tier-btn w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-sky-500/20 border border-sky-400/40 font-display font-bold text-xs sm:text-sm text-white cursor-pointer transition-all">
+            Get Day Pass · $1.50
+          </button>
+        </div>
+
+        <!-- Tier 2: Weekly Pro ($2.50 / week) -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-5">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Weekly Pro</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">7 Days</span>
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-3xl text-white">$2.50</span>
+                <span class="text-xs text-slate-400">/ week</span>
+                <span data-local-price="weekly" class="font-mono text-sm font-semibold text-sky-300">≈ ₦3,880</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">150 scans daily · Auto-renews weekly (cancel anytime)</p>
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans per day</strong> for 7 days</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Auto-renewal ON by default (toggle anytime)</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Email-linked quota synced across sessions</span></li>
+            </ul>
+          </div>
+          <button type="button" data-select-tier="weekly" class="select-tier-btn w-full min-h-[44px] py-2.5 px-4 rounded-xl bg-elevated hover:bg-sky-500/20 border border-sky-400/40 font-display font-bold text-xs sm:text-sm text-white cursor-pointer transition-all">
+            Start Weekly Pro · $2.50
+          </button>
+        </div>
+
+        <!-- Tier 3: Monthly Pro ($3.50 / month — Best Value) -->
+        <div class="glass-card rounded-2xl border-2 border-sky-400/65 p-5 flex flex-col justify-between space-y-5 shadow-2xl shadow-sky-500/15">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-display font-bold text-lg text-white">Monthly Pro</span>
+              <span class="px-2.5 py-1 rounded-lg bg-sky-500/20 border border-sky-400/40 font-mono text-xs font-semibold text-sky-300">Best Value</span>
+            </div>
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span class="font-display font-extrabold text-3xl text-white">$3.50</span>
+                <span class="text-xs text-slate-400">/ month</span>
+                <span data-local-price="monthly" class="font-mono text-sm font-semibold text-sky-300">≈ ₦5,430</span>
+              </div>
+              <p class="text-xs text-sky-300 mt-1">150 scans daily · Auto-renews monthly (cancel anytime)</p>
+            </div>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-200 pt-2 border-t border-white/[0.08]">
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span><strong>150 clip scans per day</strong> for 30 days</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>Auto-renewal ON by default (toggle anytime)</span></li>
+              <li class="flex items-center gap-2"><span class="text-sky-400">✓</span><span>All-inclusive price · Instant activation</span></li>
+            </ul>
+          </div>
+          <button id="pricingUpgradeBtn" type="button" data-select-tier="monthly" class="select-tier-btn w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-xs sm:text-sm text-white cursor-pointer transition-all">
+            Start Monthly Pro · $3.50
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: HOW IT WORKS -->
+    <section id="view-how-it-works" class="hidden space-y-6 animate-fade-up">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white">
+            How <span class="text-gradient-watch">ClipZam AI</span> Works
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Upload any movie or TV clip and get an instant scene match without scrolling.
+          </p>
+        </div>
+        <button type="button" data-nav="home" class="self-start sm:self-auto min-h-[38px] px-3.5 py-2 rounded-xl bg-surface hover:bg-elevated border border-white/[0.08] text-xs font-medium text-slate-200 cursor-pointer">
+          ← Back to Scanner
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="glass-card rounded-2xl p-5 space-y-2.5">
+          <div class="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-400/35 text-sky-300 font-mono font-bold text-xs flex items-center justify-center">01</div>
+          <h3 class="font-display font-bold text-base text-white">Upload & Trim to 15s</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Choose a video or audio clip. If your clip is over 15 seconds, use the built-in window slider to select the clearest 15-second moment.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-2.5">
+          <div class="w-8 h-8 rounded-xl bg-sky-500/15 border border-sky-400/35 text-sky-300 font-mono font-bold text-xs flex items-center justify-center">02</div>
+          <h3 class="font-display font-bold text-base text-white">15s Playback & AI Scan</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            As your 15-second clip plays in the cinema frame, ClipZam AI inspects dialogue, soundtrack, cast faces, and visual framing.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-5 space-y-2.5">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-400/35 text-emerald-300 font-mono font-bold text-xs flex items-center justify-center">03</div>
+          <h3 class="font-display font-bold text-base text-white">Instant Overlay Result</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Your match pops up immediately on screen with confidence score, episode details, trailer, streaming platforms, and similar titles.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav aria-label="Bottom navigation" class="fixed bottom-0 inset-x-0 z-30 md:hidden bg-[#060B1C]/95 backdrop-blur-xl border-t border-white/[0.08]">
+    <div class="grid grid-cols-4 h-16 max-w-md mx-auto">
+      <button type="button" data-bottom-nav="home" class="bottom-nav-btn flex flex-col items-center justify-center gap-1 text-sky-400 cursor-pointer">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L3 10.5V21h6v-6h6v6h6V10.5L12 3z"/></svg>
+        <span class="text-[11px] font-semibold">Home</span>
+      </button>
+
+      <button type="button" data-bottom-nav="history" class="bottom-nav-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+        <span class="text-[11px] font-medium">History</span>
+      </button>
+
+      <button type="button" data-bottom-nav="pricing" class="bottom-nav-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16L3 6l5.5 4L12 4l3.5 6L21 6l-2 10H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
+        <span class="text-[11px] font-medium">Pricing</span>
+      </button>
+
+      <button type="button" data-bottom-nav="how-it-works" class="bottom-nav-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="text-[11px] font-medium">How It Works</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- No-Scroll Instant Result Modal / Overlay -->
+  <div id="resultModal" class="fixed inset-0 z-40 hidden items-end sm:items-center justify-center p-0 sm:p-4 bg-black/85 backdrop-blur-md">
+    <div class="w-full max-w-2xl max-h-[92dvh] bg-surface border border-sky-400/25 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-up">
+      <div class="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-b border-white/[0.08] bg-obsidian/75 shrink-0">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]"></span>
+          <span class="font-display font-bold text-sm text-white">Match Result</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="scanAnotherBtn" type="button" class="min-h-[34px] px-3 py-1.5 rounded-xl btn-primary-blue text-xs font-semibold text-white cursor-pointer">
+            Scan Another Clip
+          </button>
+          <button id="closeResultModalBtn" type="button" aria-label="Close result" class="min-w-[34px] min-h-[34px] rounded-xl bg-elevated hover:bg-white/[0.12] flex items-center justify-center text-slate-300 hover:text-white cursor-pointer">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="out" class="overflow-y-auto flex-1"></div>
+    </div>
+  </div>
+
+  <!-- Plan, Country Currency & Paystack Checkout Modal -->
+  <div id="planModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md">
+    <div class="w-full max-w-md max-h-[92dvh] overflow-y-auto bg-surface border border-white/[0.12] rounded-2xl shadow-2xl animate-fade-up">
+      <div class="flex items-start justify-between gap-3 px-5 pt-5 pb-3 border-b border-white/[0.07]">
+        <div>
+          <h2 class="font-display font-bold text-lg text-white leading-tight">ClipZam Pro Plans</h2>
+          <p class="text-xs text-slate-400 mt-1">Free: 3 scans/day · Pro: 150 scans/day</p>
+        </div>
+        <button id="closePlanBtn" type="button" aria-label="Close" class="min-w-[34px] min-h-[34px] rounded-lg bg-elevated hover:bg-white/[0.1] flex items-center justify-center text-slate-400 hover:text-white cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <!-- Active Plan Status -->
+        <div class="flex items-center justify-between text-xs py-2.5 px-3.5 rounded-xl bg-elevated border border-white/[0.07]">
+          <span id="modalStatusSummary" class="text-slate-200 font-mono">FREE · 3/3 left today</span>
+          <span id="modalExpiryTag" class="font-mono text-emerald-400 hidden"></span>
+        </div>
+
+        <div id="modalAlert" class="hidden rounded-xl px-3.5 py-2.5 text-xs border leading-relaxed"></div>
+
+        <!-- Country & Local Currency Selector -->
+        <div class="space-y-1.5">
+          <label for="modalCountrySelect" class="block text-xs font-medium text-slate-300">
+            Select Country & Currency
+          </label>
+          <select id="modalCountrySelect" class="country-selector w-full rounded-xl bg-obsidian border border-white/[0.12] focus:border-sky-400 focus:outline-none px-3.5 py-2.5 text-xs sm:text-sm text-white cursor-pointer">
+            <option value="NG">🇳🇬 Nigeria — NGN (Bank Transfer, USSD, Card)</option>
+            <option value="US">🇺🇸 United States — USD (International Card)</option>
+            <option value="GB">🇬🇧 United Kingdom — GBP (International Card)</option>
+            <option value="GH">🇬🇭 Ghana — GHS (International Card)</option>
+            <option value="KE">🇰🇪 Kenya — KES (International Card)</option>
+            <option value="ZA">🇿🇦 South Africa — ZAR (International Card)</option>
+            <option value="CA">🇨🇦 Canada — CAD (International Card)</option>
+            <option value="EU">🇪🇺 Europe — EUR (International Card)</option>
+          </select>
+          <p id="modalPaymentMethodHint" class="text-[11px] text-sky-300 font-mono">
+            Charged in NGN via Paystack (Bank Transfer, USSD & Cards supported)
+          </p>
+        </div>
+
+        <!-- Tier Selector Pills (Day Pass $1.50 | Weekly $2.50 | Monthly $3.50) -->
+        <div class="space-y-1.5">
+          <span class="block text-xs font-medium text-slate-300">Choose Plan (All-Inclusive Price)</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" data-modal-tier="day" class="modal-tier-card rounded-xl border border-white/[0.1] bg-elevated/80 p-2.5 text-left cursor-pointer transition-all">
+              <div class="text-[11px] font-semibold text-slate-300">Day Pass</div>
+              <div class="font-display font-extrabold text-sm sm:text-base text-white mt-0.5">$1.50</div>
+              <div data-local-price="day" class="font-mono text-[10px] text-sky-300 mt-0.5">≈ ₦2,330</div>
+              <div class="text-[10px] text-slate-400 mt-1">24h · 150 scans</div>
+            </button>
+
+            <button type="button" data-modal-tier="weekly" class="modal-tier-card rounded-xl border border-white/[0.1] bg-elevated/80 p-2.5 text-left cursor-pointer transition-all">
+              <div class="text-[11px] font-semibold text-slate-300">Weekly</div>
+              <div class="font-display font-extrabold text-sm sm:text-base text-white mt-0.5">$2.50</div>
+              <div data-local-price="weekly" class="font-mono text-[10px] text-sky-300 mt-0.5">≈ ₦3,880</div>
+              <div class="text-[10px] text-slate-400 mt-1">7d · 150/day</div>
+            </button>
+
+            <button type="button" data-modal-tier="monthly" class="modal-tier-card rounded-xl border-2 border-sky-400 bg-sky-500/10 p-2.5 text-left cursor-pointer transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-white">Monthly</span>
+                <span class="text-[9px] font-mono uppercase text-sky-300">Best</span>
+              </div>
+              <div class="font-display font-extrabold text-sm sm:text-base text-white mt-0.5">$3.50</div>
+              <div data-local-price="monthly" class="font-mono text-[10px] text-sky-300 mt-0.5">≈ ₦5,430</div>
+              <div class="text-[10px] text-slate-300 mt-1">30d · 150/day</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Auto-Renewal Control (ON by default for Weekly/Monthly, Hidden for One-Time Day Pass) -->
+        <div id="autoRenewBox" class="rounded-xl bg-elevated/90 border border-white/[0.08] p-3 flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <div class="text-xs font-semibold text-white flex items-center gap-1.5">
+              <span>Auto-Renewal</span>
+              <span id="autoRenewBadge" class="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-mono text-[10px]">ON</span>
+            </div>
+            <p id="autoRenewHelpText" class="text-[11px] text-slate-400 mt-0.5 leading-snug">
+              Renews automatically every 30 days. Toggle off anytime.
+            </p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer shrink-0">
+            <input id="autoRenewToggle" type="checkbox" checked class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-sky-500"></div>
+          </label>
+        </div>
+
+        <!-- Email Input -->
+        <div>
+          <label for="subEmailInput" class="block text-xs font-medium text-slate-300 mb-1.5">
+            Email for plan & receipt
+          </label>
+          <input
+            id="subEmailInput"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full rounded-xl bg-obsidian border border-white/[0.12] focus:border-sky-400 focus:outline-none px-3.5 py-2.5 text-sm text-white placeholder-slate-500"
+          >
+        </div>
+
+        <!-- Checkout CTA -->
+        <button id="upgradePaystackBtn" type="button" class="w-full min-h-[46px] py-3 px-4 rounded-xl btn-primary-blue font-display font-bold text-sm text-white cursor-pointer transition-all">
+          Pay $3.50 (≈ ₦5,430) via Paystack
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trailer Modal -->
+  <div id="trailerModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+    <div class="w-full max-w-2xl bg-surface border border-white/[0.12] rounded-2xl overflow-hidden shadow-2xl animate-fade-up">
+      <div class="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
+        <span id="trailerTitle" class="text-sm font-display font-bold text-white truncate pr-4">Official Trailer</span>
+        <button id="closeTrailerBtn" type="button" class="min-w-[36px] min-h-[36px] rounded-lg bg-elevated hover:bg-white/[0.12] flex items-center justify-center text-slate-300 hover:text-white cursor-pointer">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="aspect-video w-full bg-black">
+        <iframe id="trailerFrame" class="w-full h-full border-0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+const CONFIG = {
+  API_ENDPOINT: "/api/identify",
+  STATUS_ENDPOINT: "/api/subscription/status",
+  PAYSTACK_INIT_ENDPOINT: "/api/paystack/init",
+  PAYSTACK_VERIFY_ENDPOINT: "/api/paystack/verify",
+  PAYSTACK_AUTORENEW_ENDPOINT: "/api/subscription/autorenew",
+  FX_RATES_ENDPOINT: "https://open.er-api.com/v6/latest/USD",
+  EMAIL_STORAGE_KEY: "cz_sub_email",
+  COUNTRY_STORAGE_KEY: "cz_selected_country",
+  HISTORY_STORAGE_KEY: "cz_daily_history_v1",
+  MAX_SECONDS: 15,
+  MAX_MB: 10,
+  MAX_RAW_MB: 45
+};
+
+/* USD All-Inclusive Plans (Paystack fees baked in) */
+const PLANS = {
+  day: {
+    id: "day",
+    label: "Day Pass",
+    usd: 1.50,
+    durationDays: 1,
+    dailyLimit: 150,
+    supportsAutoRenew: false,
+    periodText: "24 hours"
+  },
+  weekly: {
+    id: "weekly",
+    label: "Weekly Pro",
+    usd: 2.50,
+    durationDays: 7,
+    dailyLimit: 150,
+    supportsAutoRenew: true,
+    periodText: "7 days"
+  },
+  monthly: {
+    id: "monthly",
+    label: "Monthly Pro",
+    usd: 3.50,
+    durationDays: 30,
+    dailyLimit: 150,
+    supportsAutoRenew: true,
+    periodText: "30 days"
+  }
+};
+
+/* Supported Countries, Currencies & Paystack Settlement Routing */
+const COUNTRIES = {
+  NG: {
+    code: "NG",
+    name: "Nigeria",
+    currency: "NGN",
+    symbol: "₦",
+    fallbackRate: 1550,
+    roundStep: 10,
+    chargeCurrency: "NGN",
+    channelSummary: "Paystack Nigeria · Bank Transfer, USSD & Cards",
+    checkoutHint: "Charged in NGN via Paystack (Bank Transfer, USSD & Cards supported)"
+  },
+  US: {
+    code: "US",
+    name: "United States",
+    currency: "USD",
+    symbol: "$",
+    fallbackRate: 1,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa, Mastercard & Amex",
+    checkoutHint: "Processed securely via Paystack International Card (auto-converted by your bank)"
+  },
+  GB: {
+    code: "GB",
+    name: "United Kingdom",
+    currency: "GBP",
+    symbol: "£",
+    fallbackRate: 0.79,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Processed securely via Paystack International Card (auto-converted by your bank)"
+  },
+  GH: {
+    code: "GH",
+    name: "Ghana",
+    currency: "GHS",
+    symbol: "GH₵",
+    fallbackRate: 15.8,
+    roundStep: 0.5,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in GHS · Processed via Paystack International Card"
+  },
+  KE: {
+    code: "KE",
+    name: "Kenya",
+    currency: "KES",
+    symbol: "KSh ",
+    fallbackRate: 129,
+    roundStep: 5,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in KES · Processed via Paystack International Card"
+  },
+  ZA: {
+    code: "ZA",
+    name: "South Africa",
+    currency: "ZAR",
+    symbol: "R",
+    fallbackRate: 18.2,
+    roundStep: 1,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in ZAR · Processed via Paystack International Card"
+  },
+  CA: {
+    code: "CA",
+    name: "Canada",
+    currency: "CAD",
+    symbol: "CA$",
+    fallbackRate: 1.39,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in CAD · Processed via Paystack International Card"
+  },
+  EU: {
+    code: "EU",
+    name: "Europe",
+    currency: "EUR",
+    symbol: "€",
+    fallbackRate: 0.92,
+    roundStep: 0.01,
+    chargeCurrency: "NGN",
+    channelSummary: "International Card · Visa & Mastercard",
+    checkoutHint: "Estimated in EUR · Processed via Paystack International Card"
+  }
+};
+
+const $ = id => document.getElementById(id);
+const fileInput = $('file');
+const preview = $('preview');
+const go = $('go');
+const out = $('out');
+const note = $('note');
+const drop = $('drop');
+const clueInput = $('clueInput');
+const previewStage = $('previewStage');
+const fileNameLabel = $('fileNameLabel');
+const fileSizeLabel = $('fileSizeLabel');
+const fileDurationLabel = $('fileDurationLabel');
+const trimBox = $('trimBox');
+const trimSlider = $('trimSlider');
+const trimRangeLabel = $('trimRangeLabel');
+const scannerOverlay = $('scannerOverlay');
+const liveTimerBadge = $('liveTimerBadge');
+const progressBarBox = $('progressBarBox');
+const progressStageText = $('progressStageText');
+const progressTimerText = $('progressTimerText');
+const progressFill = $('progressFill');
+const goLabel = $('goLabel');
+const resultModal = $('resultModal');
+
+let clip = null;
+let needsTrim = false;
+let trimStart = 0;
+let progressTimers = [];
+let playbackCapInterval = null;
+let currentRenderedMatch = null;
+
+let selectedCountryCode = "NG";
+let selectedTierId = "monthly";
+let autoRenewEnabled = true;
+let liveFxRates = {};
+
+let subState = {
+  email: null,
+  plan: "free",
+  isPro: false,
+  autoRenew: true,
+  daysRemaining: 0,
+  dailyLimit: 3
+};
+let usageState = {
+  used: 0,
+  remaining: 3,
+  limit: 3
+};
+
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+}[c]));
+
+const fmtTime = sec => {
+  const s = Math.max(0, Math.floor(sec));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
+
+/* ============================================================================
+ * Country, Live Currency Conversion & Tier Pricing Logic
+ * ========================================================================== */
+function detectDefaultCountry() {
+  try {
+    const saved = localStorage.getItem(CONFIG.COUNTRY_STORAGE_KEY);
+    if (saved && COUNTRIES[saved]) return saved;
+  } catch (_) {}
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    if (tz.includes("Lagos")) return "NG";
+    if (tz.includes("Accra")) return "GH";
+    if (tz.includes("Nairobi")) return "KE";
+    if (tz.includes("Johannesburg")) return "ZA";
+    if (tz.includes("London")) return "GB";
+    if (tz.includes("Toronto") || tz.includes("Vancouver")) return "CA";
+    if (tz.startsWith("Europe/")) return "EU";
+    if (tz.startsWith("America/")) return "US";
+  } catch (_) {}
+  return "NG";
+}
+
+function getRateForCurrency(currency) {
+  if (currency === "USD") return 1;
+  if (liveFxRates && typeof liveFxRates[currency] === "number" && liveFxRates[currency] > 0) {
+    return liveFxRates[currency];
+  }
+  const match = Object.values(COUNTRIES).find(c => c.currency === currency);
+  return match ? match.fallbackRate : 1;
+}
+
+function formatConvertedAmount(usdAmount, countryObj) {
+  const rate = getRateForCurrency(countryObj.currency);
+  const raw = usdAmount * rate;
+  if (countryObj.currency === "USD") {
+    return `$${usdAmount.toFixed(2)}`;
+  }
+  if (countryObj.roundStep >= 1) {
+    const rounded = Math.round(raw / countryObj.roundStep) * countryObj.roundStep;
+    return `${countryObj.symbol}${rounded.toLocaleString()}`;
+  }
+  return `${countryObj.symbol}${raw.toFixed(2)}`;
+}
+
+function getNgnEquivalent(usdAmount) {
+  const ngnRate = getRateForCurrency("NGN");
+  return Math.round((usdAmount * ngnRate) / 10) * 10;
+}
+
+async function fetchLiveExchangeRates() {
+  try {
+    const res = await fetch(CONFIG.FX_RATES_ENDPOINT);
+    const data = await res.json().catch(() => null);
+    if (res.ok && data && data.rates) {
+      liveFxRates = data.rates;
+      updatePricingAndCurrencyUI();
+    }
+  } catch (_) {}
+}
+
+function setSelectedCountry(code) {
+  if (!COUNTRIES[code]) return;
+  selectedCountryCode = code;
+  try { localStorage.setItem(CONFIG.COUNTRY_STORAGE_KEY, code); } catch (_) {}
+  document.querySelectorAll('.country-selector').forEach(sel => {
+    sel.value = code;
+  });
+  updatePricingAndCurrencyUI();
+}
+
+function setSelectedTier(tierId) {
+  if (!PLANS[tierId]) return;
+  selectedTierId = tierId;
+
+  document.querySelectorAll('.modal-tier-card').forEach(card => {
+    const active = card.dataset.modalTier === tierId;
+    card.className = active
+      ? 'modal-tier-card rounded-xl border-2 border-sky-400 bg-sky-500/10 p-2.5 text-left cursor-pointer transition-all'
+      : 'modal-tier-card rounded-xl border border-white/[0.1] bg-elevated/80 hover:border-white/25 p-2.5 text-left cursor-pointer transition-all';
+  });
+
+  const plan = PLANS[tierId];
+  const autoBox = $('autoRenewBox');
+  if (plan.supportsAutoRenew) {
+    autoBox.classList.remove('hidden');
+    $('autoRenewHelpText').textContent = `Renews automatically every ${plan.periodText}. Toggle off anytime.`;
+  } else {
+    autoBox.classList.add('hidden');
+  }
+
+  updatePricingAndCurrencyUI();
+}
+
+function updateAutoRenewUI() {
+  $('autoRenewToggle').checked = !!autoRenewEnabled;
+  const badge = $('autoRenewBadge');
+  if (autoRenewEnabled) {
+    badge.textContent = 'ON';
+    badge.className = 'px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 font-mono text-[10px]';
+  } else {
+    badge.textContent = 'OFF';
+    badge.className = 'px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 font-mono text-[10px]';
+  }
+}
+
+function updatePricingAndCurrencyUI() {
+  const country = COUNTRIES[selectedCountryCode] || COUNTRIES.NG;
+  const plan = PLANS[selectedTierId] || PLANS.monthly;
+
+  // Update FX rate & payment method banners on Pricing page
+  if (country.currency === "USD") {
+    $('fxRateBannerText').textContent = "Base currency: USD ($1.50 / $2.50 / $3.50 all-inclusive)";
+  } else {
+    const sampleRate = formatConvertedAmount(1, country);
+    $('fxRateBannerText').textContent = `Live rate: $1 USD ≈ ${sampleRate} ${country.currency}`;
+  }
+  $('paymentChannelBannerText').textContent = country.channelSummary;
+  $('modalPaymentMethodHint').textContent = country.checkoutHint;
+
+  // Update local currency estimates across Pricing cards and Checkout modal
+  ['day', 'weekly', 'monthly'].forEach(tKey => {
+    const p = PLANS[tKey];
+    const formattedLocal = formatConvertedAmount(p.usd, country);
+    document.querySelectorAll(`[data-local-price="${tKey}"]`).forEach(el => {
+      if (country.currency === "USD") {
+        el.textContent = "USD";
+      } else {
+        el.textContent = `≈ ${formattedLocal}`;
+      }
+    });
+  });
+
+  // Update Checkout button text
+  const localTotal = formatConvertedAmount(plan.usd, country);
+  const priceTag = country.currency === "USD"
+    ? `$${plan.usd.toFixed(2)}`
+    : `$${plan.usd.toFixed(2)} (≈ ${localTotal})`;
+
+  $('upgradePaystackBtn').textContent = `Pay ${priceTag} via Paystack`;
+}
+
+document.querySelectorAll('.country-selector').forEach(sel => {
+  sel.addEventListener('change', e => setSelectedCountry(e.target.value));
+});
+
+document.querySelectorAll('.modal-tier-card').forEach(card => {
+  card.addEventListener('click', () => setSelectedTier(card.dataset.modalTier));
+});
+
+document.querySelectorAll('.select-tier-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setSelectedTier(btn.dataset.selectTier);
+    openPlanModal();
+  });
+});
+
+$('autoRenewToggle').addEventListener('change', async e => {
+  autoRenewEnabled = !!e.target.checked;
+  updateAutoRenewUI();
+
+  // If user already has an active subscription, sync auto-renewal toggle with backend
+  const email = getSavedEmail();
+  if (email && subState.isPro) {
+    try {
+      await fetch(CONFIG.PAYSTACK_AUTORENEW_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, autoRenew: autoRenewEnabled })
+      });
+      setModalAlert(
+        autoRenewEnabled
+          ? 'Auto-renewal turned ON for your upcoming billing cycle.'
+          : 'Auto-renewal turned OFF. Your current paid days remain active until expiry.',
+        'info'
+      );
+    } catch (_) {}
+  }
+});
+
+/* ============================================================================
+ * Navigation (Home, Today's History, Pricing, How It Works)
+ * ========================================================================== */
+function setActiveView(viewName) {
+  ['home', 'history', 'pricing', 'how-it-works'].forEach(name => {
+    const el = $(`view-${name}`);
+    if (el) el.classList.toggle('hidden', name !== viewName);
+  });
+
+  document.querySelectorAll('.nav-link').forEach(btn => {
+    const active = btn.dataset.nav === viewName;
+    btn.className = active
+      ? 'nav-link px-3.5 py-2 rounded-xl text-white bg-white/[0.08] cursor-pointer transition-colors'
+      : 'nav-link px-3.5 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/[0.05] cursor-pointer transition-colors';
+  });
+
+  document.querySelectorAll('.bottom-nav-btn[data-bottom-nav]').forEach(btn => {
+    const active = btn.dataset.bottomNav === viewName;
+    btn.className = active
+      ? 'bottom-nav-btn flex flex-col items-center justify-center gap-1 text-sky-400 cursor-pointer'
+      : 'bottom-nav-btn flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-200 cursor-pointer';
+  });
+
+  if (viewName === 'history') {
+    purgeExpiredHistoryIfNeeded();
+    renderHistoryList();
+  }
+}
+
+document.querySelectorAll('[data-nav]').forEach(el => {
+  el.addEventListener('click', () => setActiveView(el.dataset.nav));
+});
+document.querySelectorAll('[data-bottom-nav]').forEach(el => {
+  el.addEventListener('click', () => setActiveView(el.dataset.bottomNav));
+});
+$('brandHomeLink').addEventListener('click', e => {
+  e.preventDefault();
+  setActiveView('home');
+});
+
+/* ============================================================================
+ * Result Modal (No-Scroll Instant Overlay)
+ * ========================================================================== */
+function openResultModal() {
+  resultModal.classList.remove('hidden');
+  resultModal.classList.add('flex');
+  out.scrollTop = 0;
+}
+
+function closeResultModal() {
+  resultModal.classList.add('hidden');
+  resultModal.classList.remove('flex');
+}
+
+$('closeResultModalBtn').addEventListener('click', closeResultModal);
+resultModal.addEventListener('click', e => {
+  if (e.target === resultModal) closeResultModal();
+});
+$('scanAnotherBtn').addEventListener('click', () => {
+  closeResultModal();
+  resetWorkspace();
+  setActiveView('home');
+});
+
+/* ============================================================================
+ * Auto-Expiring Daily History (Clears Automatically at 12:00 AM)
+ * ========================================================================== */
+function getTodayDateString() {
+  return new Date().toDateString();
+}
+
+function purgeExpiredHistoryIfNeeded() {
+  const today = getTodayDateString();
+  try {
+    const raw = localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!parsed || parsed.date !== today || !Array.isArray(parsed.items)) {
+      localStorage.removeItem(CONFIG.HISTORY_STORAGE_KEY);
+      return [];
+    }
+    return parsed.items;
+  } catch (_) {
+    try { localStorage.removeItem(CONFIG.HISTORY_STORAGE_KEY); } catch (__){}
+    return [];
+  }
+}
+
+function saveMatchToTodayHistory(matchData) {
+  if (!matchData || !matchData.identified) return;
+  const today = getTodayDateString();
+  const currentItems = purgeExpiredHistoryIfNeeded();
+  const entry = {
+    ...matchData,
+    savedDate: today,
+    scannedTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  };
+  const deduped = currentItems.filter(item => !(
+    item.title === entry.title &&
+    item.year === entry.year &&
+    item.season === entry.season &&
+    item.episode === entry.episode
+  ));
+  deduped.unshift(entry);
+  try {
+    localStorage.setItem(CONFIG.HISTORY_STORAGE_KEY, JSON.stringify({
+      date: today,
+      items: deduped.slice(0, 30)
+    }));
+  } catch (_) {}
+}
+
+function renderHistoryList() {
+  const container = $('historyList');
+  const items = purgeExpiredHistoryIfNeeded();
+
+  if (!items.length) {
+    container.innerHTML = `
+      <div class="glass-card rounded-2xl p-6 text-center space-y-2">
+        <p class="font-display font-bold text-sm text-white">No scans recorded today</p>
+        <p class="text-xs text-slate-400">Any movie or TV show you identify today appears here until 12:00 AM.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = items.map((item, idx) => {
+    const pct = Math.round((item.confidence || 0) * 100);
+    const meta = [
+      item.year,
+      item.season && item.episode ? `S${item.season} · E${item.episode}` : '',
+      item.scannedTime
+    ].filter(Boolean).join(' • ');
+
+    return `
+      <div class="glass-card rounded-2xl p-4 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5 min-w-0">
+          ${item.poster
+            ? `<img src="${esc(item.poster)}" alt="${esc(item.title)}" class="w-12 h-16 rounded-xl object-cover border border-white/10 shrink-0 bg-elevated">`
+            : `<div class="w-12 h-16 rounded-xl bg-elevated border border-white/10 flex items-center justify-center text-[10px] font-mono text-slate-400 shrink-0">CLIP</div>`}
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="font-display font-bold text-sm sm:text-base text-white truncate">${esc(item.title)}</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 font-mono text-[11px] font-semibold shrink-0">${pct}%</span>
+            </div>
+            <p class="text-xs font-mono text-slate-400 mt-0.5 truncate">${esc(meta)}</p>
+          </div>
+        </div>
+        <button type="button" data-history-idx="${idx}" class="view-history-item shrink-0 min-h-[36px] px-3.5 py-1.5 rounded-xl bg-elevated hover:bg-white/[0.1] border border-white/[0.1] text-xs font-semibold text-sky-300 cursor-pointer">
+          View
+        </button>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.view-history-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.historyIdx);
+      if (items[idx]) {
+        render(items[idx], { skipHistorySave: true });
+      }
+    });
+  });
+}
+
+$('clearHistoryBtn').addEventListener('click', () => {
+  try { localStorage.removeItem(CONFIG.HISTORY_STORAGE_KEY); } catch (_) {}
+  renderHistoryList();
+});
+
+/* ============================================================================
+ * Email & Subscription State
+ * ========================================================================== */
+function getSavedEmail() {
+  try {
+    return (localStorage.getItem(CONFIG.EMAIL_STORAGE_KEY) || '').trim().toLowerCase();
+  } catch (_) {
+    return '';
+  }
+}
+
+function setSavedEmail(email) {
+  try {
+    if (email) localStorage.setItem(CONFIG.EMAIL_STORAGE_KEY, email.trim().toLowerCase());
+    else localStorage.removeItem(CONFIG.EMAIL_STORAGE_KEY);
+  } catch (_) {}
+}
+
+function updateSubscriptionUI() {
+  const isPro = !!subState.isPro;
+  const remaining = Math.max(0, Number(usageState.remaining ?? subState.dailyLimit ?? 3));
+  const limit = Math.max(1, Number(usageState.limit ?? subState.dailyLimit ?? 3));
+
+  if (typeof subState.autoRenew === "boolean") {
+    autoRenewEnabled = subState.autoRenew;
+    updateAutoRenewUI();
+  }
+
+  $('headerPlanQuota').textContent = `${remaining}/${limit} Left`;
+  $('headerPlanQuota').className = remaining === 0
+    ? 'font-mono text-xs sm:text-sm font-bold text-rose-400'
+    : (isPro ? 'font-mono text-xs sm:text-sm font-bold text-emerald-300' : 'font-mono text-xs sm:text-sm font-bold text-white');
+
+  $('quotaDiamondIcon').className = remaining === 0
+    ? 'w-4 h-4 text-rose-400 shrink-0'
+    : (isPro ? 'w-4 h-4 text-emerald-400 shrink-0' : 'w-4 h-4 text-sky-400 shrink-0');
+
+  $('freePlanBtn').textContent = isPro ? 'Switch to Scanner' : 'Current Plan';
+  $('modalStatusSummary').textContent = `${isPro ? 'PRO' : 'FREE'} · ${remaining}/${limit} left today`;
+
+  const expiryEl = $('modalExpiryTag');
+  if (isPro && subState.daysRemaining > 0) {
+    expiryEl.textContent = `${subState.daysRemaining}d left`;
+    expiryEl.classList.remove('hidden');
+  } else {
+    expiryEl.classList.add('hidden');
+  }
+
+  updatePricingAndCurrencyUI();
+}
+
+function setModalAlert(message, type = 'info') {
+  const el = $('modalAlert');
+  if (!message) {
+    el.className = 'hidden rounded-xl px-3.5 py-2.5 text-xs border leading-relaxed';
+    el.textContent = '';
+    return;
+  }
+  el.textContent = message;
+  if (type === 'err') {
+    el.className = 'rounded-xl px-3.5 py-2.5 text-xs border leading-relaxed bg-rose-950/60 border-rose-500/30 text-rose-200';
+  } else if (type === 'ok') {
+    el.className = 'rounded-xl px-3.5 py-2.5 text-xs border leading-relaxed bg-emerald-950/60 border-emerald-500/30 text-emerald-200';
+  } else {
+    el.className = 'rounded-xl px-3.5 py-2.5 text-xs border leading-relaxed bg-elevated border-white/[0.1] text-slate-200';
+  }
+}
+
+function openPlanModal(alertMessage = '', alertType = 'info') {
+  if (!$('subEmailInput').value && subState.email) {
+    $('subEmailInput').value = subState.email;
+  }
+  setModalAlert(alertMessage, alertType);
+  updateSubscriptionUI();
+  $('planModal').classList.remove('hidden');
+  $('planModal').classList.add('flex');
+}
+
+function closePlanModal() {
+  $('planModal').classList.add('hidden');
+  $('planModal').classList.remove('flex');
+}
+
+async function refreshSubscriptionStatus(overrideEmail = null) {
+  const email = (overrideEmail ?? getSavedEmail()).trim().toLowerCase();
+  if (email) {
+    setSavedEmail(email);
+    $('subEmailInput').value = email;
+  }
+  try {
+    const qs = email ? `?email=${encodeURIComponent(email)}` : '';
+    const res = await fetch(`${CONFIG.STATUS_ENDPOINT}${qs}`);
+    const data = await res.json().catch(() => null);
+    if (res.ok && data?.subscription) {
+      subState = data.subscription;
+      if (data.usage) usageState = data.usage;
+      updateSubscriptionUI();
+    }
+  } catch (_) {}
+}
+
+async function handlePaystackReturnIfNeeded() {
+  const params = new URLSearchParams(window.location.search);
+  const reference = params.get('reference') || params.get('trxref') || '';
+  const shouldVerify = params.get('paystack_verify') === '1' || !!reference;
+
+  if (!shouldVerify) return;
+
+  const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+  window.history.replaceState({}, document.title, cleanUrl);
+
+  if (!reference) {
+    openPlanModal('Enter your email to check your subscription status.', 'info');
+    return;
+  }
+
+  openPlanModal('Verifying payment...', 'info');
+  try {
+    const email = getSavedEmail();
+    const res = await fetch(CONFIG.PAYSTACK_VERIFY_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reference, email })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.status) {
+      setModalAlert(data?.error || data?.message || 'Payment verification failed.', 'err');
+      return;
+    }
+
+    const activatedEmail = data.subscription?.email || email;
+    if (activatedEmail) setSavedEmail(activatedEmail);
+    await refreshSubscriptionStatus(activatedEmail);
+    const days = data.subscription?.daysRemaining || PLANS[selectedTierId]?.durationDays || 30;
+    setModalAlert(`ClipZam Pro active for ${days} day${days > 1 ? 's' : ''} (150 scans/day).`, 'ok');
+  } catch (err) {
+    setModalAlert(err?.message || 'Could not verify payment.', 'err');
+  }
+}
+
+async function startPaystackCheckout() {
+  const inputEmail = ($('subEmailInput').value || getSavedEmail() || '').trim().toLowerCase();
+  if (!inputEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputEmail)) {
+    openPlanModal('Enter a valid email address to continue to Paystack.', 'err');
+    $('subEmailInput').focus();
+    return;
+  }
+
+  setSavedEmail(inputEmail);
+  await refreshSubscriptionStatus(inputEmail);
+
+  const plan = PLANS[selectedTierId] || PLANS.monthly;
+  const country = COUNTRIES[selectedCountryCode] || COUNTRIES.NG;
+  const ngnAmount = getNgnEquivalent(plan.usd);
+  const autoRenew = plan.supportsAutoRenew ? !!autoRenewEnabled : false;
+
+  const btn = $('upgradePaystackBtn');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Redirecting to Paystack...';
+  setModalAlert('', 'info');
+
+  try {
+    const res = await fetch(CONFIG.PAYSTACK_INIT_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: inputEmail,
+        tier: plan.id,
+        amountUsd: plan.usd,
+        amountNgn: ngnAmount,
+        currency: country.chargeCurrency,
+        displayCurrency: country.currency,
+        country: country.code,
+        durationDays: plan.durationDays,
+        dailyLimit: plan.dailyLimit,
+        autoRenew,
+        callbackUrl: `${window.location.origin}${window.location.pathname}?paystack_verify=1`
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.authorization_url) {
+      throw new Error(
+        data?.error ||
+          data?.message ||
+          `Paystack init failed (${res.status}). Check PAYSTACK_SECRET_KEY in Cloudflare.`
+      );
+    }
+    window.location.href = data.authorization_url;
+  } catch (err) {
+    setModalAlert(err.message || 'Could not initialize payment.', 'err');
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
+$('openPlanBtn').addEventListener('click', () => openPlanModal());
+$('profileAccountBtn').addEventListener('click', () => openPlanModal());
+$('closePlanBtn').addEventListener('click', closePlanModal);
+$('planModal').addEventListener('click', e => { if (e.target === $('planModal')) closePlanModal(); });
+$('subEmailInput').addEventListener('change', () => {
+  const email = ($('subEmailInput').value || '').trim().toLowerCase();
+  if (!email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setSavedEmail(email);
+    refreshSubscriptionStatus(email);
+  }
+});
+$('upgradePaystackBtn').addEventListener('click', startPaystackCheckout);
+
+/* ============================================================================
+ * Clip Selection, 15s Window Playback & AI Identification
+ * ========================================================================== */
+function show(el, text, cls) {
+  el.hidden = false;
+  el.classList.remove('hidden');
+  if (cls === 'err') {
+    el.className = 'msg err mt-4 p-3.5 rounded-xl bg-rose-950/60 border border-rose-500/30 text-rose-200 flex items-start gap-2.5';
+    el.innerHTML = `<svg class="w-4 h-4 text-rose-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>${esc(text)}</span>`;
+  } else {
+    el.className = 'msg info mt-4 p-3.5 rounded-xl bg-elevated border border-white/[0.08] text-slate-300 flex items-start gap-2.5';
+    el.innerHTML = `<svg class="w-4 h-4 text-sky-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>${esc(text)}</span>`;
+  }
+}
+function hideNote() {
+  note.hidden = true;
+  note.classList.add('hidden');
+}
+
+function stopLivePlaybackMonitor() {
+  if (playbackCapInterval) {
+    clearInterval(playbackCapInterval);
+    playbackCapInterval = null;
+  }
+  liveTimerBadge.classList.add('hidden');
+}
+
+function startLivePlaybackMonitor(startSec) {
+  stopLivePlaybackMonitor();
+  const maxEnd = Math.min(preview.duration || startSec + CONFIG.MAX_SECONDS, startSec + CONFIG.MAX_SECONDS);
+  const windowLen = Math.max(1, Math.round(maxEnd - startSec));
+  liveTimerBadge.classList.remove('hidden');
+  liveTimerBadge.textContent = `0:00 / ${fmtTime(windowLen)}`;
+
+  playbackCapInterval = setInterval(() => {
+    const elapsed = Math.max(0, Math.min(windowLen, (preview.currentTime || startSec) - startSec));
+    liveTimerBadge.textContent = `${fmtTime(elapsed)} / ${fmtTime(windowLen)}`;
+    if ((preview.currentTime || 0) >= maxEnd) {
+      preview.pause();
+      stopLivePlaybackMonitor();
+    }
+  }, 200);
+}
+
+function resetWorkspace() {
+  stopLivePlaybackMonitor();
+  clip = null;
+  needsTrim = false;
+  trimStart = 0;
+  fileInput.value = '';
+  if (clueInput) clueInput.value = '';
+  preview.pause();
+  preview.removeAttribute('src');
+  preview.hidden = true;
+  previewStage.classList.add('hidden');
+  trimBox.classList.add('hidden');
+  drop.classList.remove('hidden');
+  go.disabled = true;
+  goLabel.textContent = 'Identify Clip';
+  hideNote();
+}
+$('clearClipBtn').addEventListener('click', resetWorkspace);
+
+function updateTrimPreview() {
+  trimStart = parseFloat(trimSlider.value) || 0;
+  const end = Math.min(preview.duration || trimStart + CONFIG.MAX_SECONDS, trimStart + CONFIG.MAX_SECONDS);
+  trimRangeLabel.textContent = `${fmtTime(trimStart)} – ${fmtTime(end)}`;
+  if (isFinite(preview.duration)) preview.currentTime = trimStart;
+}
+trimSlider.addEventListener('input', updateTrimPreview);
+
+function pick(file) {
+  out.innerHTML = '';
+  go.disabled = true;
+  clip = null;
+  needsTrim = false;
+  trimBox.classList.add('hidden');
+  stopLivePlaybackMonitor();
+  hideNote();
+  if (!file) return;
+
+  if (file.size > CONFIG.MAX_RAW_MB * 1024 * 1024) {
+    return show(note, `File is too large (${(file.size / (1024 * 1024)).toFixed(1)} MB). Choose a file under ${CONFIG.MAX_RAW_MB} MB.`, 'err');
+  }
+
+  drop.classList.add('hidden');
+  previewStage.classList.remove('hidden');
+  fileNameLabel.textContent = file.name || 'Selected clip';
+  fileSizeLabel.textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+  fileDurationLabel.textContent = 'Checking duration...';
+  fileDurationLabel.className = 'text-slate-400';
+
+  preview.src = URL.createObjectURL(file);
+  preview.hidden = false;
+
+  preview.onloadedmetadata = () => {
+    const dur = preview.duration;
+    if (isFinite(dur) && dur > CONFIG.MAX_SECONDS + 0.5) {
+      if (file.type.startsWith('video/') && typeof MediaRecorder !== 'undefined') {
+        needsTrim = true;
+        clip = file;
+        const maxStart = Math.max(0, Math.floor((dur - CONFIG.MAX_SECONDS) * 2) / 2);
+        trimSlider.max = String(maxStart);
+        trimSlider.value = '0';
+        trimStart = 0;
+        trimRangeLabel.textContent = `0:00 – ${fmtTime(CONFIG.MAX_SECONDS)}`;
+        trimBox.classList.remove('hidden');
+        fileDurationLabel.textContent = `${dur.toFixed(1)}s (15s window ready)`;
+        fileDurationLabel.className = 'text-amber-400';
+        go.disabled = false;
+        return;
+      } else {
+        fileDurationLabel.textContent = `${Math.round(dur)}s (max ${CONFIG.MAX_SECONDS}s)`;
+        fileDurationLabel.className = 'text-rose-400';
+        show(note, `This audio clip is ${Math.round(dur)}s long. Max is ${CONFIG.MAX_SECONDS}s.`, 'err');
+        return;
+      }
+    }
+
+    if (file.size > CONFIG.MAX_MB * 1024 * 1024) {
+      show(note, `File is too big (${(file.size / (1024 * 1024)).toFixed(1)} MB). Keep it under ${CONFIG.MAX_MB} MB.`, 'err');
+      return;
+    }
+
+    fileDurationLabel.textContent = isFinite(dur) ? `${dur.toFixed(1)}s` : 'Ready';
+    fileDurationLabel.className = 'text-emerald-400';
+    clip = file;
+    go.disabled = false;
+    hideNote();
+  };
+
+  preview.onerror = () => {
+    if (file.size > CONFIG.MAX_MB * 1024 * 1024) {
+      return show(note, `File is too big. Keep it under ${CONFIG.MAX_MB} MB.`, 'err');
+    }
+    fileDurationLabel.textContent = 'Media ready';
+    fileDurationLabel.className = 'text-emerald-400';
+    clip = file;
+    go.disabled = false;
+  };
+}
+
+fileInput.addEventListener('change', e => pick(e.target.files[0]));
+['dragover', 'dragenter'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', e => pick(e.dataTransfer.files[0]));
+
+async function extract15sSegment(videoEl, startSec) {
+  return new Promise((resolve, reject) => {
+    const stream = videoEl.captureStream ? videoEl.captureStream() : (videoEl.mozCaptureStream ? videoEl.mozCaptureStream() : null);
+    if (!stream) return reject(new Error('Browser does not support automatic trimming. Trim to 15s first.'));
+
+    const mimeType = ['video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'].find(m => MediaRecorder.isTypeSupported(m)) || '';
+    const recorder = new MediaRecorder(stream, mimeType ? { mimeType, videoBitsPerSecond: 1400000 } : undefined);
+    const chunks = [];
+
+    recorder.ondataavailable = e => { if (e.data && e.data.size > 0) chunks.push(e.data); };
+    recorder.onerror = () => reject(new Error('Could not extract 15s segment.'));
+    recorder.onstop = () => {
+      videoEl.pause();
+      stopLivePlaybackMonitor();
+      resolve(new Blob(chunks, { type: recorder.mimeType || 'video/webm' }));
+    };
+
+    const durationMs = Math.min(CONFIG.MAX_SECONDS, Math.max(1, (videoEl.duration || startSec + CONFIG.MAX_SECONDS) - startSec)) * 1000;
+    videoEl.currentTime = startSec;
+    videoEl.muted = false;
+
+    videoEl.onseeked = () => {
+      videoEl.onseeked = null;
+      recorder.start(250);
+      startLivePlaybackMonitor(startSec);
+      videoEl.play().catch(() => { videoEl.muted = true; videoEl.play(); });
+      setTimeout(() => { if (recorder.state !== 'inactive') recorder.stop(); }, durationMs);
+    };
+  });
+}
+
+function toBase64(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const raw = String(r.result || '');
+      const idx = raw.indexOf(';base64,');
+      const b64 = idx !== -1 ? raw.slice(idx + 8) : (raw.split(',')[1] || '');
+      res(b64.replace(/[^A-Za-z0-9+/=]/g, ''));
+    };
+    r.onerror = () => rej(new Error('Could not read file.'));
+    r.readAsDataURL(blob);
+  });
+}
+
+function startProgress(isTrimming) {
+  scannerOverlay.classList.remove('hidden');
+  progressBarBox.classList.remove('hidden');
+  progressFill.style.width = isTrimming ? '14%' : '24%';
+  progressTimerText.textContent = isTrimming ? '0:00 – 0:15' : 'Scanning';
+  progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>${isTrimming ? 'Playing & capturing selected 15s window...' : 'Playing & analyzing clip...'}`;
+
+  progressTimers.push(setTimeout(() => {
+    progressFill.style.width = '60%';
+    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>Analyzing dialogue, cast & cinematography...`;
+  }, isTrimming ? 15500 : 2500));
+
+  progressTimers.push(setTimeout(() => {
+    progressFill.style.width = '86%';
+    progressStageText.innerHTML = `<span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>Verifying match & loading TMDB details...`;
+  }, isTrimming ? 22000 : 9000));
+}
+
+function stopProgress() {
+  progressTimers.forEach(clearTimeout);
+  progressTimers = [];
+  stopLivePlaybackMonitor();
+  scannerOverlay.classList.add('hidden');
+  progressBarBox.classList.add('hidden');
+}
+
+async function identifyOnServer(mediaBlob) {
+  const mediaBase64 = await toBase64(mediaBlob);
+  const clue = clueInput ? clueInput.value.trim() : '';
+  const cleanMime = String(mediaBlob.type || 'video/mp4').split(';')[0].trim() || 'video/mp4';
+  const email = getSavedEmail();
+
+  const headers = { 'Content-Type': 'application/json' };
+  if (email) headers['x-user-email'] = email;
+
+  const res = await fetch(CONFIG.API_ENDPOINT, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({ mediaBase64, mimeType: cleanMime, clue, email: email || undefined })
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (data?.subscription) subState = data.subscription;
+  if (data?.usage) usageState = data.usage;
+  if (data?.subscription || data?.usage) updateSubscriptionUI();
+
+  if (res.status === 429 && data?.code === 'DAILY_LIMIT_REACHED') {
+    const err = new Error(data.error || 'Daily scan limit reached.');
+    err.isDailyLimit = true;
+    err.isProLimit = !!data?.subscription?.isPro;
+    throw err;
+  }
+
+  if (!res.ok) throw new Error(data.error || 'Could not identify this clip.');
+  return data;
+}
+
+go.addEventListener('click', async () => {
+  if (!clip) return;
+  go.disabled = true;
+  goLabel.textContent = 'Analyzing...';
+  out.innerHTML = '';
+  hideNote();
+  startProgress(needsTrim);
+
+  try {
+    let payloadBlob = clip;
+    if (needsTrim) {
+      payloadBlob = await extract15sSegment(preview, trimStart);
+      if (payloadBlob.size > CONFIG.MAX_MB * 1024 * 1024) {
+        throw new Error('Trimmed clip is still over 10 MB. Try a lower-resolution video.');
+      }
+    } else {
+      preview.currentTime = 0;
+      startLivePlaybackMonitor(0);
+      preview.play().catch(() => {
+        preview.muted = true;
+        preview.play().catch(() => {});
+      });
+    }
+
+    const d = await identifyOnServer(payloadBlob);
+    preview.pause();
+    stopProgress();
+    render(d);
+  } catch (e) {
+    preview.pause();
+    stopProgress();
+    show(note, e.message || 'Something went wrong.', 'err');
+    if (e.isDailyLimit) openPlanModal(e.message, e.isProLimit ? 'info' : 'err');
+  } finally {
+    go.disabled = false;
+    goLabel.textContent = 'Identify Clip';
+  }
+});
+
+/* ============================================================================
+ * Trailer & Share
+ * ========================================================================== */
+function openTrailer(key, title) {
+  $('trailerTitle').textContent = `${title} — Trailer`;
+  $('trailerFrame').src = `https://www.youtube.com/embed/${encodeURIComponent(key)}?autoplay=1&rel=0`;
+  $('trailerModal').classList.remove('hidden');
+  $('trailerModal').classList.add('flex');
+}
+function closeTrailer() {
+  $('trailerFrame').src = '';
+  $('trailerModal').classList.add('hidden');
+  $('trailerModal').classList.remove('flex');
+}
+$('closeTrailerBtn').addEventListener('click', closeTrailer);
+$('trailerModal').addEventListener('click', e => { if (e.target === $('trailerModal')) closeTrailer(); });
+
+async function shareMatch() {
+  const d = currentRenderedMatch;
+  if (!d) return;
+  const seText = d.season && d.episode ? ` (S${d.season} E${d.episode})` : '';
+  const pct = Math.round((d.confidence || 0) * 100);
+  const text = `Identified with ClipZam AI: ${d.title}${d.year ? ` (${d.year})` : ''}${seText} — ${pct}% match`;
+  const url = d.tmdb_url || window.location.href;
+
+  if (navigator.share) {
+    try { await navigator.share({ title: d.title, text, url }); return; } catch (_) {}
+  }
+  const ta = document.createElement('textarea');
+  ta.value = `${text} ${d.tmdb_url || ''}`.trim();
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  const btn = $('shareBtn');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = `<span class="text-emerald-400">Copied!</span>`;
+    setTimeout(() => { btn.innerHTML = orig; }, 1800);
+  }
+}
+
+/* ============================================================================
+ * Match Result Render (Opens Instantly in No-Scroll Overlay Modal)
+ * ========================================================================== */
+function render(d, options = {}) {
+  currentRenderedMatch = d;
+
+  if (!d.identified) {
+    out.innerHTML = `
+      <div class="p-6 sm:p-8 text-center space-y-2">
+        <p class="font-display font-bold text-lg text-white">Could not identify this clip</p>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
+          Try a clip with clearer dialogue, faces, or soundtrack, or add scene/actor clues.
+        </p>
+      </div>`;
+    openResultModal();
+    return;
+  }
+
+  if (!options.skipHistorySave) {
+    saveMatchToTodayHistory(d);
+  }
+
+  const pct = Math.round((d.confidence || 0) * 100);
+  const seBadge = d.season && d.episode
+    ? `<span class="px-2 py-0.5 rounded-md bg-sky-500/15 border border-sky-400/30 text-sky-300 font-mono text-xs font-semibold">S${esc(d.season)} · E${esc(d.episode)}</span>`
+    : '';
+
+  const poster = d.poster
+    ? `<img src="${esc(d.poster)}" alt="${esc(d.title)}" class="w-28 sm:w-40 aspect-[2/3] object-cover rounded-xl border border-white/10 shadow-xl shrink-0 bg-elevated">`
+    : `<div class="w-28 sm:w-40 aspect-[2/3] rounded-xl border border-white/10 bg-elevated flex items-center justify-center text-xs font-mono text-slate-500 shrink-0">No Poster</div>`;
+
+  const providersHtml = (d.providers && d.providers.length)
+    ? `<div class="flex flex-wrap items-center gap-2 pt-1">
+         <span class="text-xs font-medium text-slate-400">Available on:</span>
+         ${d.providers.map(p => `
+           <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-elevated border border-white/[0.08] text-xs text-slate-200">
+             ${p.logo ? `<img src="${esc(p.logo)}" alt="" class="w-4 h-4 rounded">` : ''}
+             <span>${esc(p.name)}</span>
+           </span>
+         `).join('')}
+       </div>`
+    : '';
+
+  const charactersHtml = (d.characters && d.characters.length)
+    ? `<div class="flex flex-wrap items-center gap-1.5 mt-2.5">
+         ${d.characters.map(c => `<span class="px-2 py-0.5 rounded-md bg-white/[0.05] text-[11px] text-slate-300">${esc(c)}</span>`).join('')}
+       </div>`
+    : '';
+
+  const dialogueHtml = (d.dialogue && d.dialogue.length)
+    ? `<div class="mt-3 pt-3 border-t border-white/[0.06] space-y-1">
+         ${d.dialogue.map(line => `<p class="text-xs italic text-slate-300 pl-2.5 border-l-2 border-sky-400/70">“${esc(line)}”</p>`).join('')}
+       </div>`
+    : '';
+
+  const sim = (d.similar || []).map(s => `
+    <div class="flex-none w-24 sm:w-28">
+      <div class="aspect-[2/3] w-full rounded-xl overflow-hidden bg-elevated border border-white/[0.08] mb-1.5">
+        ${s.poster
+          ? `<img src="${esc(s.poster)}" alt="${esc(s.title)}" class="w-full h-full object-cover">`
+          : `<div class="w-full h-full flex items-center justify-center p-2 text-center text-[11px] text-slate-500">${esc(s.title)}</div>`}
+      </div>
+      <div class="text-xs font-medium text-slate-200 leading-snug line-clamp-2">${esc(s.title)}</div>
+      ${s.year ? `<div class="text-[11px] font-mono text-slate-500">${esc(s.year)}</div>` : ''}
+    </div>
+  `).join('');
+
+  out.innerHTML = `
+    <article class="bg-surface">
+      <div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-5 items-start border-b border-white/[0.07]">
+        ${poster}
+        <div class="flex-1 min-w-0 w-full">
+          <div class="flex flex-wrap items-center gap-2 mb-2">
+            <span class="px-2.5 py-0.5 rounded-md bg-white/[0.07] font-mono text-[11px] font-semibold uppercase text-slate-300">
+              ${d.type === 'tv' ? 'TV Series' : 'Movie'}
+            </span>
+            ${d.year ? `<span class="font-mono text-xs text-slate-400">${esc(d.year)}</span>` : ''}
+            ${d.rating ? `<span class="font-mono text-xs text-amber-400">★ ${esc(d.rating)}</span>` : ''}
+            ${seBadge}
+          </div>
+
+          <h2 class="font-display font-extrabold text-2xl sm:text-3xl text-white leading-tight break-words">
+            ${esc(d.title)}
+          </h2>
+
+          ${d.scene_context ? `<p class="text-xs sm:text-sm text-sky-300 font-medium mt-1">${esc(d.scene_context)}</p>` : ''}
+
+          <div class="mt-3.5 max-w-xs">
+            <div class="flex justify-between text-xs font-mono mb-1">
+              <span class="text-slate-400">Match Confidence</span>
+              <span class="font-bold ${pct >= 80 ? 'text-emerald-400' : 'text-sky-300'}">${pct}%</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-white/[0.08] overflow-hidden">
+              <div class="h-full rounded-full ${pct >= 80 ? 'bg-emerald-400' : 'btn-primary-blue'}" style="width:${pct}%"></div>
+            </div>
+          </div>
+
+          ${providersHtml}
+
+          <div class="mt-4 flex flex-wrap items-center gap-2.5">
+            ${d.trailer_key ? `
+              <button type="button" onclick="openTrailer('${esc(d.trailer_key)}', '${esc(d.title).replace(/'/g, "\\'")}')" class="min-h-[40px] px-4 py-2 rounded-xl btn-primary-blue text-xs font-semibold text-white inline-flex items-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Watch Trailer</span>
+              </button>` : ''}
+            ${d.tmdb_url ? `
+              <a href="${esc(d.tmdb_url)}" target="_blank" rel="noopener" class="min-h-[40px] px-3.5 py-2 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-xs font-medium text-slate-200 inline-flex items-center gap-1.5">
+                <span>TMDB</span>
+                <svg class="w-3 h-3 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>` : ''}
+            <button id="shareBtn" type="button" onclick="shareMatch()" class="min-h-[40px] px-3.5 py-2 rounded-xl bg-elevated hover:bg-white/[0.09] border border-white/[0.09] text-xs font-medium text-slate-200 inline-flex items-center gap-1.5 cursor-pointer">
+              <svg class="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+              <span>Share</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 sm:p-6 space-y-5 text-sm">
+        ${(d.evidence || dialogueHtml || charactersHtml) ? `
+          <div class="rounded-xl bg-elevated/85 border border-white/[0.08] p-4">
+            <div class="text-[11px] font-mono uppercase tracking-wider text-slate-400 mb-1.5">How we knew</div>
+            ${d.evidence ? `<p class="text-xs sm:text-sm text-slate-200 leading-relaxed">${esc(d.evidence)}</p>` : ''}
+            ${charactersHtml}
+            ${dialogueHtml}
+          </div>
+        ` : ''}
+
+        ${d.episode_title ? `
+          <div class="space-y-2.5">
+            <h3 class="font-display font-bold text-sm sm:text-base text-white">Episode: ${esc(d.episode_title)}</h3>
+            ${d.episode_overview ? `<p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${esc(d.episode_overview)}</p>` : ''}
+            ${d.episode_still ? `<img src="${esc(d.episode_still)}" alt="${esc(d.episode_title)}" class="w-full rounded-xl border border-white/[0.08] max-h-64 object-cover">` : ''}
+          </div>
+        ` : ''}
+
+        ${d.overview ? `
+          <div>
+            <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-400 mb-1.5">About</h3>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${esc(d.overview)}</p>
+          </div>
+        ` : ''}
+
+        ${sim ? `
+          <div>
+            <h3 class="font-display font-bold text-xs uppercase tracking-wider text-slate-400 mb-2.5">Similar titles</h3>
+            <div class="shelf-scroll flex gap-3 overflow-x-auto pb-1">${sim}</div>
+          </div>
+        ` : ''}
+      </div>
+    </article>`;
+
+  openResultModal();
+}
+
+(async function initApp() {
+  setSelectedCountry(detectDefaultCountry());
+  setSelectedTier("monthly");
+  updateAutoRenewUI();
+  purgeExpiredHistoryIfNeeded();
+  setInterval(() => {
+    const before = localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY);
+    purgeExpiredHistoryIfNeeded();
+    if (before && !localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY) && !$('view-history').classList.contains('hidden')) {
+      renderHistoryList();
+    }
+  }, 30000);
+  updateSubscriptionUI();
+  fetchLiveExchangeRates();
+  await refreshSubscriptionStatus();
+  await handlePaystackReturnIfNeeded();
+})();
+  </script>
+</body>
+</html>
