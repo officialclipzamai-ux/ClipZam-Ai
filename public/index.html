@@ -322,6 +322,25 @@
           >
         </div>
 
+        <!-- Inline Email Gate for Scan #2 & Scan #3 (Free Tier Bot Protection) -->
+        <div id="freeEmailGateBox" class="hidden mt-4 rounded-xl bg-sky-950/35 border border-sky-400/35 p-3.5 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <label for="gateEmailInput" class="text-xs font-semibold text-sky-200">
+              Enter your email to unlock your next free scan
+            </label>
+            <span class="text-[10px] font-mono text-sky-300">Scan #2–3</span>
+          </div>
+          <p class="text-[11px] text-slate-300 leading-snug">
+            Your first scan was free with no sign-up. Add your email to verify and use your remaining daily free scans.
+          </p>
+          <input
+            id="gateEmailInput"
+            type="email"
+            placeholder="you@example.com"
+            class="w-full rounded-xl bg-obsidian/95 border border-sky-400/30 focus:border-sky-400 focus:outline-none px-3.5 py-2 text-xs sm:text-sm text-white placeholder-slate-500"
+          >
+        </div>
+
         <!-- Error / Status Note -->
         <div id="note" class="msg info hidden mt-4 rounded-xl text-xs sm:text-sm" hidden></div>
 
@@ -387,7 +406,6 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2.5">
-          <!-- Country / Currency Selector -->
           <div class="flex items-center gap-2 bg-surface border border-sky-400/30 rounded-xl px-3 py-1.5">
             <label for="pricingCountrySelect" class="text-xs text-slate-400 shrink-0">Country:</label>
             <select id="pricingCountrySelect" class="country-selector bg-transparent text-xs sm:text-sm font-semibold text-white focus:outline-none cursor-pointer">
@@ -426,14 +444,14 @@
           <div class="space-y-3">
             <div class="flex items-center justify-between">
               <span class="font-display font-bold text-lg text-white">Free</span>
-              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">No Sign-Up</span>
+              <span class="px-2.5 py-1 rounded-lg bg-white/[0.06] font-mono text-xs text-slate-300">1st Free · Email 2–3</span>
             </div>
             <div>
               <div class="font-display font-extrabold text-3xl text-white">$0 <span class="text-sm font-normal text-slate-400">/ forever</span></div>
               <p class="text-xs text-slate-400 mt-1">3 scans daily · Resets every midnight</p>
             </div>
             <ul class="space-y-2 text-xs sm:text-sm text-slate-300 pt-2 border-t border-white/[0.06]">
-              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>3 clip identifications per day</span></li>
+              <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>3 clip identifications per day (1st instant, email for 2nd–3rd)</span></li>
               <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Movie & TV episode matching</span></li>
               <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span><span>Trailers & streaming platforms</span></li>
             </ul>
@@ -565,6 +583,14 @@
       </div>
     </section>
   </main>
+
+  <!-- Site Footer -->
+  <footer class="border-t border-white/[0.08] bg-obsidian/70 backdrop-blur-md py-4 px-4 sm:px-6 text-center">
+    <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+      <p class="font-medium text-slate-200">Founder &amp; CEO: Glory E Samson</p>
+      <p class="font-mono text-[11px] text-slate-500">ClipZam AI · Find it. Watch it.</p>
+    </div>
+  </footer>
 
   <!-- Mobile Bottom Navigation Bar -->
   <nav aria-label="Bottom navigation" class="fixed bottom-0 inset-x-0 z-30 md:hidden bg-[#060B1C]/95 backdrop-blur-xl border-t border-white/[0.08]">
@@ -748,6 +774,7 @@ const CONFIG = {
   FX_RATES_ENDPOINT: "https://open.er-api.com/v6/latest/USD",
   EMAIL_STORAGE_KEY: "cz_sub_email",
   COUNTRY_STORAGE_KEY: "cz_selected_country",
+  USAGE_STORAGE_KEY: "cz_daily_usage_v1",
   HISTORY_STORAGE_KEY: "cz_daily_history_v1",
   MAX_SECONDS: 15,
   MAX_MB: 10,
@@ -885,6 +912,8 @@ const out = $('out');
 const note = $('note');
 const drop = $('drop');
 const clueInput = $('clueInput');
+const freeEmailGateBox = $('freeEmailGateBox');
+const gateEmailInput = $('gateEmailInput');
 const previewStage = $('previewStage');
 const fileNameLabel = $('fileNameLabel');
 const fileSizeLabel = $('fileSizeLabel');
@@ -935,6 +964,84 @@ const fmtTime = sec => {
   const s = Math.max(0, Math.floor(sec));
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 };
+
+function getTodayDateString() {
+  return new Date().toDateString();
+}
+
+/* ============================================================================
+ * Daily Usage Tracking & Midnight Reset
+ * ========================================================================== */
+function loadLocalDailyUsage(limit = 3) {
+  const today = getTodayDateString();
+  try {
+    const raw = localStorage.getItem(CONFIG.USAGE_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.date === today) {
+        const used = Math.max(0, Number(parsed.used) || 0);
+        const effLimit = Math.max(1, Number(limit) || Number(parsed.limit) || 3);
+        const remaining = Math.max(0, effLimit - used);
+        return { date: today, used, remaining, limit: effLimit };
+      }
+    }
+  } catch (_) {}
+  const fresh = { date: today, used: 0, remaining: Math.max(1, Number(limit) || 3), limit: Math.max(1, Number(limit) || 3) };
+  saveLocalDailyUsage(fresh);
+  return fresh;
+}
+
+function saveLocalDailyUsage(u) {
+  try {
+    localStorage.setItem(CONFIG.USAGE_STORAGE_KEY, JSON.stringify({
+      date: getTodayDateString(),
+      used: Math.max(0, Number(u.used) || 0),
+      remaining: Math.max(0, Number(u.remaining) || 0),
+      limit: Math.max(1, Number(u.limit) || 3)
+    }));
+  } catch (_) {}
+}
+
+function syncUsageFromServer(serverUsage, serverSub) {
+  const limit = Math.max(1, Number(serverUsage?.limit ?? serverSub?.dailyLimit ?? usageState.limit ?? 3));
+  const local = loadLocalDailyUsage(limit);
+
+  if (serverUsage && typeof serverUsage.remaining === 'number') {
+    const serverUsed = typeof serverUsage.used === 'number'
+      ? serverUsage.used
+      : Math.max(0, limit - serverUsage.remaining);
+    const used = Math.max(local.used, serverUsed);
+    const remaining = Math.max(0, limit - used);
+    usageState = { used, remaining, limit };
+    saveLocalDailyUsage(usageState);
+  } else {
+    usageState = local;
+  }
+}
+
+function incrementUsageAfterScan() {
+  const limit = Math.max(1, Number(usageState.limit ?? subState.dailyLimit ?? 3));
+  const used = Math.min(limit, (Number(usageState.used) || 0) + 1);
+  const remaining = Math.max(0, limit - used);
+  usageState = { used, remaining, limit };
+  saveLocalDailyUsage(usageState);
+  updateSubscriptionUI();
+}
+
+function needsEmailForNextFreeScan() {
+  if (subState.isPro) return false;
+  // Scan #1 is free with no email; Scan #2 and Scan #3 require email for bot protection
+  const nextScanNumber = (Number(usageState.used) || 0) + 1;
+  return nextScanNumber >= 2 && !getSavedEmail();
+}
+
+function updateFreeEmailGateUI() {
+  if (needsEmailForNextFreeScan()) {
+    freeEmailGateBox.classList.remove('hidden');
+  } else {
+    freeEmailGateBox.classList.add('hidden');
+  }
+}
 
 /* ============================================================================
  * Country, Live Currency Conversion & Tier Pricing Logic
@@ -1045,7 +1152,6 @@ function updatePricingAndCurrencyUI() {
   const country = COUNTRIES[selectedCountryCode] || COUNTRIES.NG;
   const plan = PLANS[selectedTierId] || PLANS.monthly;
 
-  // Update FX rate & payment method banners on Pricing page
   if (country.currency === "USD") {
     $('fxRateBannerText').textContent = "Base currency: USD ($1.50 / $2.50 / $3.50 all-inclusive)";
   } else {
@@ -1055,7 +1161,6 @@ function updatePricingAndCurrencyUI() {
   $('paymentChannelBannerText').textContent = country.channelSummary;
   $('modalPaymentMethodHint').textContent = country.checkoutHint;
 
-  // Update local currency estimates across Pricing cards and Checkout modal
   ['day', 'weekly', 'monthly'].forEach(tKey => {
     const p = PLANS[tKey];
     const formattedLocal = formatConvertedAmount(p.usd, country);
@@ -1068,7 +1173,6 @@ function updatePricingAndCurrencyUI() {
     });
   });
 
-  // Update Checkout button text
   const localTotal = formatConvertedAmount(plan.usd, country);
   const priceTag = country.currency === "USD"
     ? `$${plan.usd.toFixed(2)}`
@@ -1096,7 +1200,6 @@ $('autoRenewToggle').addEventListener('change', async e => {
   autoRenewEnabled = !!e.target.checked;
   updateAutoRenewUI();
 
-  // If user already has an active subscription, sync auto-renewal toggle with backend
   const email = getSavedEmail();
   if (email && subState.isPro) {
     try {
@@ -1182,10 +1285,6 @@ $('scanAnotherBtn').addEventListener('click', () => {
 /* ============================================================================
  * Auto-Expiring Daily History (Clears Automatically at 12:00 AM)
  * ========================================================================== */
-function getTodayDateString() {
-  return new Date().toDateString();
-}
-
 function purgeExpiredHistoryIfNeeded() {
   const today = getTodayDateString();
   try {
@@ -1299,12 +1398,13 @@ function setSavedEmail(email) {
     if (email) localStorage.setItem(CONFIG.EMAIL_STORAGE_KEY, email.trim().toLowerCase());
     else localStorage.removeItem(CONFIG.EMAIL_STORAGE_KEY);
   } catch (_) {}
+  updateFreeEmailGateUI();
 }
 
 function updateSubscriptionUI() {
   const isPro = !!subState.isPro;
-  const remaining = Math.max(0, Number(usageState.remaining ?? subState.dailyLimit ?? 3));
   const limit = Math.max(1, Number(usageState.limit ?? subState.dailyLimit ?? 3));
+  const remaining = Math.max(0, Math.min(limit, Number(usageState.remaining ?? limit)));
 
   if (typeof subState.autoRenew === "boolean") {
     autoRenewEnabled = subState.autoRenew;
@@ -1331,6 +1431,7 @@ function updateSubscriptionUI() {
     expiryEl.classList.add('hidden');
   }
 
+  updateFreeEmailGateUI();
   updatePricingAndCurrencyUI();
 }
 
@@ -1378,10 +1479,13 @@ async function refreshSubscriptionStatus(overrideEmail = null) {
     const data = await res.json().catch(() => null);
     if (res.ok && data?.subscription) {
       subState = data.subscription;
-      if (data.usage) usageState = data.usage;
-      updateSubscriptionUI();
     }
-  } catch (_) {}
+    syncUsageFromServer(data?.usage, subState);
+    updateSubscriptionUI();
+  } catch (_) {
+    syncUsageFromServer(null, subState);
+    updateSubscriptionUI();
+  }
 }
 
 async function handlePaystackReturnIfNeeded() {
@@ -1552,6 +1656,7 @@ function resetWorkspace() {
   go.disabled = true;
   goLabel.textContent = 'Identify Clip';
   hideNote();
+  updateFreeEmailGateUI();
 }
 $('clearClipBtn').addEventListener('click', resetWorkspace);
 
@@ -1571,6 +1676,7 @@ function pick(file) {
   trimBox.classList.add('hidden');
   stopLivePlaybackMonitor();
   hideNote();
+  updateFreeEmailGateUI();
   if (!file) return;
 
   if (file.size > CONFIG.MAX_RAW_MB * 1024 * 1024) {
@@ -1710,27 +1816,31 @@ function stopProgress() {
   progressBarBox.classList.add('hidden');
 }
 
-async function identifyOnServer(mediaBlob) {
+async function identifyOnServer(mediaBlob, activeEmail) {
   const mediaBase64 = await toBase64(mediaBlob);
   const clue = clueInput ? clueInput.value.trim() : '';
   const cleanMime = String(mediaBlob.type || 'video/mp4').split(';')[0].trim() || 'video/mp4';
-  const email = getSavedEmail();
 
   const headers = { 'Content-Type': 'application/json' };
-  if (email) headers['x-user-email'] = email;
+  if (activeEmail) headers['x-user-email'] = activeEmail;
 
   const res = await fetch(CONFIG.API_ENDPOINT, {
     method: 'POST',
     headers,
-    body: JSON.stringify({ mediaBase64, mimeType: cleanMime, clue, email: email || undefined })
+    body: JSON.stringify({ mediaBase64, mimeType: cleanMime, clue, email: activeEmail || undefined })
   });
 
   const data = await res.json().catch(() => ({}));
   if (data?.subscription) subState = data.subscription;
-  if (data?.usage) usageState = data.usage;
-  if (data?.subscription || data?.usage) updateSubscriptionUI();
 
   if (res.status === 429 && data?.code === 'DAILY_LIMIT_REACHED') {
+    usageState = {
+      used: Number(usageState.limit || subState.dailyLimit || 3),
+      remaining: 0,
+      limit: Number(usageState.limit || subState.dailyLimit || 3)
+    };
+    saveLocalDailyUsage(usageState);
+    updateSubscriptionUI();
     const err = new Error(data.error || 'Daily scan limit reached.');
     err.isDailyLimit = true;
     err.isProLimit = !!data?.subscription?.isPro;
@@ -1738,15 +1848,45 @@ async function identifyOnServer(mediaBlob) {
   }
 
   if (!res.ok) throw new Error(data.error || 'Could not identify this clip.');
+
+  // Update remaining scans: use server usage if provided, otherwise decrement local count
+  if (data?.usage && typeof data.usage.remaining === 'number') {
+    syncUsageFromServer(data.usage, subState);
+    updateSubscriptionUI();
+  } else {
+    incrementUsageAfterScan();
+  }
+
   return data;
 }
 
 go.addEventListener('click', async () => {
   if (!clip) return;
+  hideNote();
+
+  // Check if remaining scans hit 0
+  if ((Number(usageState.remaining) || 0) <= 0) {
+    openPlanModal('You have used all your scans for today. Upgrade to ClipZam Pro for 150 scans/day.', 'err');
+    return;
+  }
+
+  // Scan #1 is free with no email; Scan #2 & Scan #3 require email for bot protection
+  let activeEmail = getSavedEmail();
+  if (needsEmailForNextFreeScan()) {
+    const typedGateEmail = (gateEmailInput?.value || '').trim().toLowerCase();
+    if (!typedGateEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(typedGateEmail)) {
+      freeEmailGateBox.classList.remove('hidden');
+      gateEmailInput?.focus();
+      return show(note, 'Please enter a valid email address to unlock your next free scan.', 'err');
+    }
+    activeEmail = typedGateEmail;
+    setSavedEmail(activeEmail);
+    $('subEmailInput').value = activeEmail;
+  }
+
   go.disabled = true;
   goLabel.textContent = 'Analyzing...';
   out.innerHTML = '';
-  hideNote();
   startProgress(needsTrim);
 
   try {
@@ -1765,7 +1905,7 @@ go.addEventListener('click', async () => {
       });
     }
 
-    const d = await identifyOnServer(payloadBlob);
+    const d = await identifyOnServer(payloadBlob, activeEmail);
     preview.pause();
     stopProgress();
     render(d);
@@ -1981,12 +2121,18 @@ function render(d, options = {}) {
   setSelectedCountry(detectDefaultCountry());
   setSelectedTier("monthly");
   updateAutoRenewUI();
+  usageState = loadLocalDailyUsage(3);
   purgeExpiredHistoryIfNeeded();
   setInterval(() => {
-    const before = localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY);
+    const beforeHistory = localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY);
     purgeExpiredHistoryIfNeeded();
-    if (before && !localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY) && !$('view-history').classList.contains('hidden')) {
+    if (beforeHistory && !localStorage.getItem(CONFIG.HISTORY_STORAGE_KEY) && !$('view-history').classList.contains('hidden')) {
       renderHistoryList();
+    }
+    const prevRemaining = usageState.remaining;
+    usageState = loadLocalDailyUsage(subState.isPro ? (subState.dailyLimit || 150) : 3);
+    if (prevRemaining !== usageState.remaining) {
+      updateSubscriptionUI();
     }
   }, 30000);
   updateSubscriptionUI();
